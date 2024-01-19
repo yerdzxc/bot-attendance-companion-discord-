@@ -13,7 +13,7 @@ export class TimeSheetService {
     ) { }
 
     async setTime(setTimeDto: SetTimeDto) {
-        const validateUser = this.userService.exists(setTimeDto.discordId);
+        const validateUser = await this.userService.exists(setTimeDto.discordId);
         if (!validateUser) return `Account must be binded. Run '/bind' command or seek help to the server admins. <:woman_gesturing_no:123456789012345678>`;
 
         const lastRecord = await this.prisma.timeSheet.findFirst({
