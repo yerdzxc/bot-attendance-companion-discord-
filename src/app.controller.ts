@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { DiscordUserDto } from './user/dtos/discord-user.dto';
 import { UserService } from './user/user.service';
 import { SetTimeDto } from './time-sheet/dtos/set-time.dto';
@@ -12,12 +12,17 @@ export class AppController {
   ) { }
 
   @Post('bind')
-  async bindUser(@Body() body: DiscordUserDto) {
+  async bindUser(@Body() body: DiscordUserDto): Promise<string> {
     return await this.userService.bindUser(body);
   }
 
   @Post('set-time')
-  async setTime(@Body() body: SetTimeDto) {
+  async setTime(@Body() body: SetTimeDto): Promise<string> {
     return await this.timeSheetService.setTime(body);
+  }
+
+  @Get('attendance')
+  async attendance(): Promise<string> {
+    return await this.timeSheetService.attendance();
   }
 }

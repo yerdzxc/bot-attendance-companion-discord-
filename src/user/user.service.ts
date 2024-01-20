@@ -6,12 +6,12 @@ import { DiscordUserDto } from './dtos/discord-user.dto';
 export class UserService {
     constructor(private readonly prisma: PrismaService) { }
 
-    async exists(id: string) {
+    async exists(id: string): Promise<boolean> {
         const exists = await this.prisma.discordUser.findFirst({ where: { discordId: id } })
         return exists ? true : false;
     }
 
-    async bindUser(discordUserDto: DiscordUserDto) {
+    async bindUser(discordUserDto: DiscordUserDto): Promise<string> {
         const { discordId, ...payload } = discordUserDto;
         const exists = await this.exists(discordId);
         if (exists) return `${payload.username}, your account is already binded. Sorry but I don't give second chance! <:melting_face:123456789012345678>`;

@@ -29,7 +29,7 @@ model TimeSheet {
   timeOut       DateTime?
   timeTotal     String?
   visibleTotal  Int?
-  status        String?
+  signatureDate String?
   created_at    DateTime    @default(now())
   updated_at    DateTime?   @updatedAt
 }
