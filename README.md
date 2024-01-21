@@ -19,6 +19,9 @@ DATABASE_URL=""
 
 ## Database Migration
 ```bash
-# production mode
+# Develop
 $ pnpx prisma migrate dev || npx prisma migrate dev
+
+# Production
+$ pnpx prisma migrate deploy || npx prisma migrate deploy
 ```
