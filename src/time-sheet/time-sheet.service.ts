@@ -105,7 +105,7 @@ export class TimeSheetService {
                 motivation = `Today is ${dateToday}.\nGorgeous Tuesday: Embrace the beauty in every moment. <:heart_eyes:123456789012345678>`;
                 break;
             case 'Wednesday':
-                motivation = `Today is ${dateToday}.\nWhimsical Wednesday: Find joy in the middle of the week. <:relaxed_smile:123456789012345678>`;
+                motivation = `Today is ${dateToday}.\nWhimsical Wednesday: Find joy in the middle of the week. <:winking_face:123456789012345678>`;
                 break;
             case 'Thursday':
                 motivation = `Today is ${dateToday}.\nThoughtful Thursday: Reflect on the positive moments. <:star_struck:123456789012345678>`;
@@ -117,7 +117,7 @@ export class TimeSheetService {
                 motivation = `Today is ${dateToday}.\nSunny Saturday: Enjoy the sunshine of the weekend. <:grinning_face:123456789012345678>`;
                 break;
             case 'Sunday':
-                motivation = `Today is ${dateToday} \nSerene Sunday: Take a moment of calm and relaxation. Linggo ngayon ah sipag mo naman! <:raised_eyebrows:123456789012345678>`;
+                motivation = `Today is ${dateToday} \nSerene Sunday: Take a moment of calm and relaxation. Linggo ngayon ah sipag mo naman! <:exploding_head:123456789012345678>`;
                 break;
         }
 
