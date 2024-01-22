@@ -9,6 +9,9 @@ $ pnpm install
 ```bash
 # production mode
 $ pnpm run start:prod
+
+# Using pm2 to run in background and auto restart 
+$ pm2 start
 ```
 
 ## ENV
@@ -19,6 +22,9 @@ DATABASE_URL=""
 
 ## Database Migration
 ```bash
-# production mode
+# Develop
 $ pnpx prisma migrate dev || npx prisma migrate dev
+
+# Production
+$ pnpx prisma migrate deploy || npx prisma migrate deploy
 ```
