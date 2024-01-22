@@ -13,7 +13,7 @@ model DiscordUser {
   username      String
   discriminator String?
   active        Boolean     @default(true)
-  lastAccess    String?     
+  lastAccess    String?
   timesheets    TimeSheet[]
   created_at    DateTime    @default(now())
   updated_at    DateTime?   @updatedAt
