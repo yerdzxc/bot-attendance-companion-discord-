@@ -3,7 +3,7 @@ import { PrismaService } from '../prisma.service';
 import { SetTimeDto } from './dtos/set-time.dto';
 import { UserService } from '../user/user.service';
 import * as moment from 'moment';
-import { TimeSheet } from '@prisma/client';
+import { DiscordUser, TimeSheet } from '@prisma/client';
 
 @Injectable()
 export class TimeSheetService {
@@ -43,15 +43,33 @@ export class TimeSheetService {
     async timeIn(setTimeDto: SetTimeDto): Promise<string> {
         const timeIn = new Date();
         const signatureDate = moment(timeIn).format('YYYY-MM-DD');
-        const transaction = await this.prisma.timeSheet.create({
-            data: {
-                discordUserId: setTimeDto.discordId,
-                username: setTimeDto.username,
-                timeIn: timeIn,
-                signatureDate: signatureDate
-            }
-        });
-        if (!transaction) return `Attendance service is down, sorry my bad. Seek help to the server admins! <:crying_cat:123456789012345678>`
+
+        try {
+            await this.prisma.$transaction([
+                this.prisma.timeSheet.create({
+                    data: {
+                        discordUserId: setTimeDto.discordId,
+                        username: setTimeDto.username,
+                        timeIn: timeIn,
+                        signatureDate: signatureDate
+                    }
+                }),
+                this.prisma.discordUser.update({
+                    where: {
+                        discordId: setTimeDto.discordId,
+                    },
+                    data: {
+                        username: setTimeDto.username,
+                        lastAccess: signatureDate,
+                        active: true
+                    }
+                })
+            ]);
+        } catch (err: any) {
+            console.log(err.response)
+            return `Attendance service is down, sorry my bad. Seek help to the server admins! <:crying_cat:123456789012345678>`;
+        }
+
         const dateFormat = moment(timeIn).format("MMMM D, YYYY hh:mm A");
         return `${setTimeDto.username}, Logged in @ ${dateFormat}. <:blue_heart:123456789012345678>`
     }
@@ -90,7 +108,6 @@ export class TimeSheetService {
         });
         return this.attendanceResult(attendance, now);
     }
-
 
     attendanceResult(attendance: TimeSheet[], now: Date): string {
         const dateToday = moment(now).format('MMMM D, YYYY');
@@ -136,6 +153,67 @@ export class TimeSheetService {
                 } else {
                     result += `${index + 1}. ${item.username}, Logged @ ${timeIn} <:hugging_face:123456789012345678> \n`;
                 }
+            });
+            return result;
+        }
+    }
+
+    async absent(): Promise<string> {
+        const now = new Date();
+        const signature = moment(now).format('YYYY-MM-DD');
+
+        const [users, actives] = await this.prisma.$transaction([
+            this.prisma.discordUser.findMany({
+                where: {
+                    active: true
+                }
+            }),
+            this.prisma.timeSheet.findMany({
+                where: {
+                    signatureDate: signature
+                }
+            })
+        ]);
+
+        const absents = users.filter(user => !actives.some(active => active.discordUserId === user.discordId));
+
+        return this.absentResult(absents, now);
+    }
+
+    absentResult(absents: DiscordUser[], now: Date): string {
+        const dateToday = moment(now).format('MMMM D, YYYY');
+        const day = moment(now).format('dddd');
+        let motivation: string;
+
+        switch (day) {
+            case 'Monday':
+                motivation = `Today is ${dateToday}.\nHappy Monday: Marvelous start to the week! <:hugging_face:123456789012345678>`;
+                break;
+            case 'Tuesday':
+                motivation = `Today is ${dateToday}.\nGorgeous Tuesday: Embrace the beauty in every moment. <:heart_eyes:123456789012345678>`;
+                break;
+            case 'Wednesday':
+                motivation = `Today is ${dateToday}.\nWhimsical Wednesday: Find joy in the middle of the week. <:winking_face:123456789012345678>`;
+                break;
+            case 'Thursday':
+                motivation = `Today is ${dateToday}.\nThoughtful Thursday: Reflect on the positive moments. <:star_struck:123456789012345678>`;
+                break;
+            case 'Friday':
+                motivation = `Today is ${dateToday}.\nFantastic Friday: Celebrate the upcoming weekend! <:partying_face:123456789012345678>`;
+                break;
+            case 'Saturday':
+                motivation = `Today is ${dateToday}.\nSunny Saturday: Enjoy the sunshine of the weekend. <:grinning_face:123456789012345678>`;
+                break;
+            case 'Sunday':
+                motivation = `Today is ${dateToday} \nSerene Sunday: Take a moment of calm and relaxation. Linggo ngayon ah sipag mo naman! <:exploding_head:123456789012345678>`;
+                break;
+        }
+        if (absents.length <= 0) return `${motivation}.\nAll Employees are here, everyone is present! <:star_struck:123456789012345678>`;
+
+        if (absents.length >= 1) {
+            let result = `${motivation}\nAbsent(s) List. <:ghost:123456789012345678>\n`;
+            absents.forEach((item, index) => {
+                result += `${index + 1}. ${item.username}\n`;
             });
             return result;
         }

@@ -5,6 +5,7 @@ specifiers:
   '@nestjs/common': ^10.0.0
   '@nestjs/core': ^10.0.0
   '@nestjs/platform-express': ^10.0.0
+  '@nestjs/schedule': ^4.0.0
   '@nestjs/schematics': ^10.0.0
   '@nestjs/testing': ^10.0.0
   '@prisma/client': 5.8.1
@@ -35,6 +36,7 @@ dependencies:
   '@nestjs/common': 10.3.0_rcbhqa4so6dtcde4mhxkgzk6je
   '@nestjs/core': 10.3.0_ti5phmpc6dupjzhqk2m4uyikty
   '@nestjs/platform-express': 10.3.0_3rapiyhwjmezpbsl5hhpinbhca
+  '@nestjs/schedule': 4.0.0_jqsf354cn24bdr6g6bveaykq2y
   '@prisma/client': 5.8.1_prisma@5.8.1
   moment: 2.30.1
   reflect-metadata: 0.1.14
@@ -959,6 +961,20 @@ packages:
     transitivePeerDependencies:
       - supports-color
 
+  /@nestjs/schedule/4.0.0_jqsf354cn24bdr6g6bveaykq2y:
+    resolution: {integrity: sha512-zz4h54m/F/1qyQKvMJCRphmuwGqJltDAkFxUXCVqJBXEs5kbPt93Pza3heCQOcMH22MZNhGlc9DmDMLXVHmgVQ==}
+    peerDependencies:
+      '@nestjs/common': ^8.0.0 || ^9.0.0 || ^10.0.0
+      '@nestjs/core': ^8.0.0 || ^9.0.0 || ^10.0.0
+      reflect-metadata: ^0.1.12
+    dependencies:
+      '@nestjs/common': 10.3.0_rcbhqa4so6dtcde4mhxkgzk6je
+      '@nestjs/core': 10.3.0_ti5phmpc6dupjzhqk2m4uyikty
+      cron: 3.1.3
+      reflect-metadata: 0.1.14
+      uuid: 9.0.1
+    dev: false
+
   /@nestjs/schematics/10.1.0_esbzk7647cakhxtea4pt357whe:
     resolution: {integrity: sha512-HQWvD3F7O0Sv3qHS2jineWxPLmBTLlyjT6VdSw2EAIXulitmV+ErxB3TCVQQORlNkl5p5cwRYWyBaOblDbNFIQ==}
     peerDependencies:
@@ -1237,6 +1253,10 @@ packages:
   /@types/json-schema/7.0.15:
     resolution: {integrity: sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA==}
     dev: true
+
+  /@types/luxon/3.3.8:
+    resolution: {integrity: sha512-jYvz8UMLDgy3a5SkGJne8H7VA7zPV2Lwohjx0V8V31+SqAjNmurWMkk9cQhfvlcnXWudBpK9xPM1n4rljOcHYQ==}
+    dev: false
 
   /@types/methods/1.1.4:
     resolution: {integrity: sha512-ymXWVrDiCxTBE3+RIrrP533E70eA+9qu7zdWoHuOmGujkYtzf4HQF96b8nwHLqhuf4ykX61IGRIB38CC6/sImQ==}
@@ -2191,6 +2211,13 @@ packages:
   /create-require/1.1.1:
     resolution: {integrity: sha512-dcKFX3jn0MpIaXjisoRvexIJVEKzaq7z2rZKxf+MSr9TkdmHmsU4m2lcLojrj/FHl8mk5VxMmYA+ftRkP/3oKQ==}
     dev: true
+
+  /cron/3.1.3:
+    resolution: {integrity: sha512-KVxeKTKYj2eNzN4ElnT6nRSbjbfhyxR92O/Jdp6SH3pc05CDJws59jBrZWEMQlxevCiE6QUTrXy+Im3vC3oD3A==}
+    dependencies:
+      '@types/luxon': 3.3.8
+      luxon: 3.4.4
+    dev: false
 
   /cross-spawn/7.0.3:
     resolution: {integrity: sha512-iRDPJKUPVEND7dHPO8rkbOnPpyDygcDFtWjpeWNCgy8WP2rXcxXL8TskReQl6OrB2G7+UJrags1q15Fudc7G6w==}
@@ -3789,6 +3816,11 @@ packages:
       yallist: 4.0.0
     dev: true
 
+  /luxon/3.4.4:
+    resolution: {integrity: sha512-zobTr7akeGHnv7eBOXcRgMeCP6+uyYsczwmeRCauvpvaAltgNyTbLH/+VaEAPUeWBT+1GuNmz4wC/6jtQzbbVA==}
+    engines: {node: '>=12'}
+    dev: false
+
   /magic-string/0.30.5:
     resolution: {integrity: sha512-7xlpfBaQaP/T6Vh8MO/EqXSW5En6INHEvEXQiuff7Gku0PWjU3uf6w/j9o7O+SpB5fOAkrI5HeoNgwjEO0pFsA==}
     engines: {node: '>=12'}
@@ -5015,6 +5047,11 @@ packages:
   /utils-merge/1.0.1:
     resolution: {integrity: sha512-pMZTvIkT1d+TFGvDOqodOclx0QWkkgi6Tdoa8gC8ffGAAqz9pzPTZWAybbsHHoED/ztMtkv/VoYTYyShUn81hA==}
     engines: {node: '>= 0.4.0'}
+
+  /uuid/9.0.1:
+    resolution: {integrity: sha512-b+1eJOlsR9K8HJpow9Ok3fiWOWSIcIzXodvv0rQjVoOVNpWMpxf1wZNpt4y9h10odCNrqnYp1OBzRktckBe3sA==}
+    hasBin: true
+    dev: false
 
   /v8-compile-cache-lib/3.0.1:
     resolution: {integrity: sha512-wa7YjyUGfNZngI/vtK0UHAN+lgDCxBPCylVXGp0zu59Fz5aiGtNXaq3DhIov063MorB+VfufLh3JlF2KdTK3xg==}

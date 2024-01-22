@@ -25,4 +25,9 @@ export class AppController {
   async attendance(): Promise<string> {
     return await this.timeSheetService.attendance();
   }
+
+  @Get('absent')
+  async absent() {
+    return await this.timeSheetService.absent();
+  }
 }
