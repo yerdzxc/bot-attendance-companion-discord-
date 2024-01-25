@@ -20,15 +20,16 @@ model DiscordUser {
 }
 
 model TimeSheet {
-  id            Int         @id @default(autoincrement())
-  discordUser   DiscordUser @relation(fields: [discordUserId], references: [discordId])
-  discordUserId String
-  username      String
-  timeIn        DateTime
-  timeOut       DateTime?
-  timeTotal     String?
-  visibleTotal  Int?
-  signatureDate String?
-  created_at    DateTime    @default(now())
-  updated_at    DateTime?   @updatedAt
+  id              Int         @id @default(autoincrement())
+  discordUser     DiscordUser @relation(fields: [discordUserId], references: [discordId])
+  discordUserId   String
+  username        String
+  timeIn          DateTime
+  timeOut         DateTime?
+  timeTotal       String?
+  visibleTotal    Int?
+  signatureDate   String?
+  expectedTimeOut DateTime?
+  created_at      DateTime    @default(now())
+  updated_at      DateTime?   @updatedAt
 }

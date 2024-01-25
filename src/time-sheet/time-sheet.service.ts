@@ -44,6 +44,8 @@ export class TimeSheetService {
         const timeIn = new Date();
         const signatureDate = moment(timeIn).format('YYYY-MM-DD');
 
+        const expectedTimeOut = moment(timeIn).add(9, 'hours').toDate();
+
         try {
             await this.prisma.$transaction([
                 this.prisma.timeSheet.create({
@@ -51,7 +53,8 @@ export class TimeSheetService {
                         discordUserId: setTimeDto.discordId,
                         username: setTimeDto.username,
                         timeIn: timeIn,
-                        signatureDate: signatureDate
+                        signatureDate: signatureDate,
+                        expectedTimeOut: expectedTimeOut
                     }
                 }),
                 this.prisma.discordUser.update({
@@ -71,7 +74,8 @@ export class TimeSheetService {
         }
 
         const dateFormat = moment(timeIn).format("MMMM D, YYYY hh:mm A");
-        return `${setTimeDto.username}, Logged in @ ${dateFormat}. <:blue_heart:123456789012345678>`
+        const formattedExpectedTimeOut = moment(expectedTimeOut).format("MMMM D, YYYY hh:mm A");
+        return `${setTimeDto.username}, Logged in @ ${dateFormat}. <:blue_heart:123456789012345678> Expected logout time is @ ${formattedExpectedTimeOut}. <:clock9:123456789012345678>`
     }
 
     async timeOut(lastRecord: TimeSheet): Promise<string> {
@@ -98,6 +102,7 @@ export class TimeSheetService {
     async attendance(): Promise<string> {
         const now = new Date();
         const signature = moment(now).format('YYYY-MM-DD');
+
         const attendance = await this.prisma.timeSheet.findMany({
             where: {
                 signatureDate: signature
@@ -106,10 +111,18 @@ export class TimeSheetService {
                 created_at: 'asc'
             }
         });
-        return this.attendanceResult(attendance, now);
+
+        const expectedTimeOutResults: string[] = [];
+
+        attendance.forEach((item) => {
+            const expectedTimeOut = moment(item.timeIn).add(9, 'hours').format("@ hh:mm A");
+            expectedTimeOutResults.push(` Expected logout time is ${expectedTimeOut}  <:hour_glass:123456789012345678>`);
+        });
+
+        return this.attendanceResult(attendance, now, expectedTimeOutResults);
     }
 
-    attendanceResult(attendance: TimeSheet[], now: Date): string {
+    attendanceResult(attendance: TimeSheet[], now: Date, expectedTimeOutResults: string[]): string {
         const dateToday = moment(now).format('MMMM D, YYYY');
         const day = moment(now).format('dddd');
         let motivation: string;
@@ -153,6 +166,7 @@ export class TimeSheetService {
                 } else {
                     result += `${index + 1}. ${item.username}, Logged @ ${timeIn} <:hugging_face:123456789012345678> \n`;
                 }
+                result += `${expectedTimeOutResults[index]}\n`
             });
             return result;
         }
