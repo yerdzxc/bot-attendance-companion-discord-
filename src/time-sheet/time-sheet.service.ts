@@ -153,13 +153,8 @@ export class TimeSheetService {
             attendance.forEach((item, index) => {
                 const timeIn = moment(item.timeIn).format("hh:mm A");
                 const expectedTimeOut = item.expectedTimeOut ? moment(item.expectedTimeOut).format("hh:mm A") : item.signatureDate;
-                if (index === 0) {
-                    result += `${index + 1}. ${item.username}, Logged @ ${timeIn} - Expected logout @ ${expectedTimeOut} <:saluting_face:123456789012345678>\n`;
-                } else if (index === attendance.length - 1) {
-                    result += `${index + 1}. ${item.username}, Logged @ ${timeIn} - Expected logout @ ${expectedTimeOut} <:sunglasses:123456789012345678>\n`;
-                } else {
-                    result += `${index + 1}. ${item.username}, Logged @ ${timeIn} - Expected logout @ ${expectedTimeOut} <:hugging_face:123456789012345678>`;
-                }
+                result += `${index + 1}. ${item.username}, Expected time range: ${timeIn} - ${expectedTimeOut}.\n`;
+
             });
             return result;
         }
