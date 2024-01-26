@@ -75,7 +75,7 @@ export class TimeSheetService {
 
         const dateFormat = moment(timeIn).format("MMMM D, YYYY hh:mm A");
         const formattedExpectedTimeOut = moment(expectedTimeOut).format("MMMM D, YYYY hh:mm A");
-        return `${setTimeDto.username}, Logged in @ ${dateFormat}. <:blue_heart:123456789012345678>, Expected logout time is @ ${formattedExpectedTimeOut}. <:clock9:123456789012345678>`
+        return `${setTimeDto.username}, Logged in @ ${dateFormat}. <:blue_heart:123456789012345678>, Expected logout is @ ${formattedExpectedTimeOut}. <:clock9:123456789012345678>`
     }
 
     async timeOut(lastRecord: TimeSheet): Promise<string> {
@@ -146,7 +146,7 @@ export class TimeSheetService {
 
         if (attendance.length <= 0) return `${motivation}.\nEmployees ghosted us, no one is present! <:ghost:123456789012345678>`;
 
-        if (attendance.length === 1) return `${motivation}.\nNot all heroes wear capes! Solo yern?\n1. ${attendance[0].username}, Logged @ ${moment(attendance[0].timeIn).format("hh:mm A")} <:superhero:123456789012345678>`;
+        if (attendance.length === 1) return `${motivation}.\nNot all heroes wear capes! Solo yern?\n1. ${attendance[0].username}, Logged @ ${moment(attendance[0].timeIn).format("hh:mm A")} <:superhero:123456789012345678>. Expected logout time is  @ ${moment(attendance[0].expectedTimeOut).format("MMMM D, YYYY hh:mm A")}`;
 
         if (attendance.length > 1) {
             let result = `${motivation}\n`;
@@ -154,11 +154,11 @@ export class TimeSheetService {
                 const timeIn = moment(item.timeIn).format("hh:mm A");
                 const expectedTimeOut = moment(item.expectedTimeOut).format("MMMM D, YYYY hh:mm A");
                 if (index === 0) {
-                    result += `${index + 1}. ${item.username}, Logged @ ${timeIn} <:saluting_face:123456789012345678>.Expected logout time is @ ${expectedTimeOut}. <:clock9:123456789012345678> \n`;
+                    result += `${index + 1}. ${item.username}, Logged @ ${timeIn} <:saluting_face:123456789012345678>\n Expected logout is @ ${expectedTimeOut}. <:clock9:123456789012345678> \n`;
                 } else if (index === attendance.length - 1) {
-                    result += `${index + 1}. ${item.username}, Logged @ ${timeIn} <:sunglasses:123456789012345678>.Expected logout time is @ ${expectedTimeOut}. <:clock9:123456789012345678> \n`;
+                    result += `${index + 1}. ${item.username}, Logged @ ${timeIn} <:sunglasses:123456789012345678>\n Expected logout is @ ${expectedTimeOut}. <:clock9:123456789012345678> \n`;
                 } else {
-                    result += `${index + 1}. ${item.username}, Logged @ ${timeIn} <:hugging_face:123456789012345678>.Expected logout time is @ ${expectedTimeOut}. <:clock9:123456789012345678> \n`;
+                    result += `${index + 1}. ${item.username}, Logged @ ${timeIn} <:hugging_face:123456789012345678> \n Expected logout is @ ${expectedTimeOut}. <:clock9:123456789012345678> \n`;
                 }
             });
             return result;
