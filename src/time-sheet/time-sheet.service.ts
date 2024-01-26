@@ -152,7 +152,7 @@ export class TimeSheetService {
             let result = `${motivation}\n`;
             attendance.forEach((item, index) => {
                 const timeIn = moment(item.timeIn).format("hh:mm A");
-                const expectedTimeOut = moment(item.expectedTimeOut).format("MMMM D, YYYY hh:mm A");
+                const expectedTimeOut = item.expectedTimeOut ? moment(item.expectedTimeOut).format("MMMM D, YYYY hh:mm A") : item.signatureDate;
                 if (index === 0) {
                     result += `${index + 1}. ${item.username}, Logged @ ${timeIn} <:saluting_face:123456789012345678>\n Expected logout is @ ${expectedTimeOut}. <:clock9:123456789012345678> \n`;
                 } else if (index === attendance.length - 1) {
