@@ -113,6 +113,7 @@ export class TimeSheetService {
         });
 
         const result = this.attendanceResult(attendance, now);
+        console.log(result);
         return result;
     }
 
