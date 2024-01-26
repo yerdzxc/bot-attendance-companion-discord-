@@ -152,7 +152,13 @@ export class TimeSheetService {
             let result = `${motivation}\nExpected Time Ranges <:clock9:123456789012345678>.\n`;
             attendance.forEach((item, index) => {
                 const timeIn = moment(item.timeIn).format("hh:mm A");
-                const expectedTimeOut = item.expectedTimeOut ? moment(item.expectedTimeOut).format("hh:mm A") : item.signatureDate;
+                let expectedTimeOut: string;
+                if (item.expectedTimeOut) {
+                    expectedTimeOut = moment(item.expectedTimeOut).format("hh:mm A")
+                } else {
+                    const setTimeOut = moment(item.timeIn).add(9, 'hours').toDate();
+                    expectedTimeOut = moment(setTimeOut).format("hh:mm A")
+                }
                 result += `${index + 1}. ${item.username}, ${timeIn} - ${expectedTimeOut}.\n`;
 
             });
