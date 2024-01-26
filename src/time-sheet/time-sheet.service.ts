@@ -146,7 +146,7 @@ export class TimeSheetService {
 
         if (attendance.length <= 0) return `${motivation}.\nEmployees ghosted us, no one is present! <:ghost:123456789012345678>`;
 
-        if (attendance.length === 1) return `${motivation}.\nNot all heroes wear capes! Solo yern?\n1. ${attendance[0].username}, Logged @ ${moment(attendance[0].timeIn).format("hh:mm A")} <:superhero:123456789012345678>. Expected logout time is  @ ${moment(attendance[0].expectedTimeOut).format("hh:mm A")}`;
+        if (attendance.length === 1) return `${motivation}.\nNot all heroes wear capes! Solo yern?\n1. ${attendance[0].username}, Logged @ ${moment(attendance[0].timeIn).format("hh:mm A")} - Expected logout @ ${moment(attendance[0].expectedTimeOut).format("hh:mm A")} <:superhero:123456789012345678>`;
 
         if (attendance.length > 1) {
             let result = `${motivation}\n`;
@@ -154,11 +154,11 @@ export class TimeSheetService {
                 const timeIn = moment(item.timeIn).format("hh:mm A");
                 const expectedTimeOut = item.expectedTimeOut ? moment(item.expectedTimeOut).format("hh:mm A") : item.signatureDate;
                 if (index === 0) {
-                    result += `${index + 1}. ${item.username}, Logged @ ${timeIn} <:saluting_face:123456789012345678>\n`;
+                    result += `${index + 1}. ${item.username}, Logged @ ${timeIn} - Expected logout @ ${expectedTimeOut} <:saluting_face:123456789012345678>\n`;
                 } else if (index === attendance.length - 1) {
-                    result += `${index + 1}. ${item.username}, Logged @ ${timeIn} <:sunglasses:123456789012345678>\n`;
+                    result += `${index + 1}. ${item.username}, Logged @ ${timeIn} - Expected logout @ ${expectedTimeOut} <:sunglasses:123456789012345678>\n`;
                 } else {
-                    result += `${index + 1}. ${item.username}, Logged @ ${timeIn} <:hugging_face:123456789012345678>\n`;
+                    result += `${index + 1}. ${item.username}, Logged @ ${timeIn} - Expected logout @ ${expectedTimeOut} <:hugging_face:123456789012345678>`;
                 }
             });
             return result;
