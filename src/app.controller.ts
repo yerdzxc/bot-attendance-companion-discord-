@@ -23,6 +23,7 @@ export class AppController {
 
   @Get('attendance')
   async attendance(): Promise<string> {
+    console.log('called');
     return await this.timeSheetService.attendance();
   }
 

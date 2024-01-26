@@ -112,7 +112,8 @@ export class TimeSheetService {
             }
         });
 
-        return this.attendanceResult(attendance, now);
+        const result = this.attendanceResult(attendance, now);
+        return result;
     }
 
     attendanceResult(attendance: TimeSheet[], now: Date): string {
