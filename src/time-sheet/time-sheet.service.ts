@@ -73,8 +73,8 @@ export class TimeSheetService {
             return `Attendance service is down, sorry my bad. Seek help to the server admins! <:crying_cat:123456789012345678>`;
         }
 
-        const dateFormat = moment(timeIn).format("MMMM D, YYYY hh:mm A");
-        const formattedExpectedTimeOut = moment(expectedTimeOut).format("MMMM D, YYYY hh:mm A");
+        const dateFormat = moment(timeIn).format("MMMM D, YYYY HH:mm");
+        const formattedExpectedTimeOut = moment(expectedTimeOut).format("MMMM D, YYYY HH:mm");
         return `${setTimeDto.username}, Logged in @ ${dateFormat}. <:blue_heart:123456789012345678>, Expected logout is @ ${formattedExpectedTimeOut}. <:clock9:123456789012345678>`
     }
 
@@ -94,7 +94,7 @@ export class TimeSheetService {
             }
         });
         if (!transaction) return `Attendance service is down, sorry my bad. Seek help to the server admins! <:crying_cat:123456789012345678>`
-        const dateFormat = moment(timeOut).format("MMMM D, YYYY hh:mm A");
+        const dateFormat = moment(timeOut).format("MMMM D, YYYY HH:mm");
         const humanizedDuration = moment.duration(duration).humanize();
         return `${lastRecord.username}, Logged out @ ${dateFormat}. Total time: ${humanizedDuration}. <:city_dusk:123456789012345678>`
     }
@@ -146,18 +146,18 @@ export class TimeSheetService {
 
         if (attendance.length <= 0) return `${motivation}.\nEmployees ghosted us, no one is present! <:ghost:123456789012345678>`;
 
-        if (attendance.length === 1) return `${motivation}.\nNot all heroes wear capes! Solo yern?\n1. ${attendance[0].username}, Logged @ ${moment(attendance[0].timeIn).format("hh:mm A")} - Expected logout @ ${moment(attendance[0].expectedTimeOut).format("hh:mm A")} <:superhero:123456789012345678>`;
+        if (attendance.length === 1) return `${motivation}.\nNot all heroes wear capes! Solo yern?\n1. ${attendance[0].username}, Logged @ ${moment(attendance[0].timeIn).format("HH:mm")} - Expected logout @ ${moment(attendance[0].expectedTimeOut).format("HH:mm")} <:superhero:123456789012345678>`;
 
         if (attendance.length > 1) {
             let result = `${motivation}\nExpected Time Ranges <:clock9:123456789012345678>.\n`;
             attendance.forEach((item, index) => {
-                const timeIn = moment(item.timeIn).format("hh:mm A");
+                const timeIn = moment(item.timeIn).format("HH:mm");
                 let expectedTimeOut: string;
                 if (item.expectedTimeOut) {
-                    expectedTimeOut = moment(item.expectedTimeOut).format("hh:mm A")
+                    expectedTimeOut = moment(item.expectedTimeOut).format("HH:mm")
                 } else {
                     const setTimeOut = moment(item.timeIn).add(9, 'hours').toDate();
-                    expectedTimeOut = moment(setTimeOut).format("hh:mm A")
+                    expectedTimeOut = moment(setTimeOut).format("HH:mm")
                 }
                 result += `${index + 1}. ${item.username}, ${timeIn} - ${expectedTimeOut}.\n`;
 
