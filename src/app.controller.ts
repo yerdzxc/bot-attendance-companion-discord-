@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { DiscordUserDto } from './user/dtos/discord-user.dto';
 import { UserService } from './user/user.service';
 import { SetTimeDto } from './time-sheet/dtos/set-time.dto';
@@ -26,6 +26,11 @@ export class AppController {
     return await this.timeSheetService.attendance();
   }
 
+  @Get('attendance-by-date')
+  async attendanceByDate(@Query('signature') signature: string): Promise<string> {
+    return await this.timeSheetService.attendanceByDate(signature);
+  }
+
   @Get('attendance-intern')
   async attendanceIntern(): Promise<string> {
     return await this.timeSheetService.attendanceIntern();
@@ -34,6 +39,11 @@ export class AppController {
   @Get('absent')
   async absent() {
     return await this.timeSheetService.absent();
+  }
+
+  @Get('absent-by-date')
+  async absentByDate(@Query('signature') signature: string): Promise<string> {
+    return await this.timeSheetService.absentByDate(signature);
   }
 
   @Get('absent-intern')
