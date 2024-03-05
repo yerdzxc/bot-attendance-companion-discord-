@@ -12,17 +12,49 @@ export class UserService {
         return exists ? true : false;
     }
 
-    async bindUser(discordUserDto: DiscordUserDto): Promise<string> {
-        const { discordId, ...payload } = discordUserDto;
+    async setBind(discordUserDto: DiscordUserDto) {
+        const { command, ...rest } = discordUserDto;
+        switch (command) {
+            case 'bind':
+                return await this.bindUser(rest);
+            case 'bind-intern':
+                return await this.bindIntern(rest);
+        }
+    }
+
+    async bindUser(discordUserDto: { discordId: string, username: string, discriminator: string }): Promise<string> {
+        const { discordId, ...rest } = discordUserDto;
         const exists = await this.exists(discordId);
-        if (exists) return `${payload.username}, your account is already binded. Sorry but I don't give second chance! <:melting_face:123456789012345678>`;
-        await this.prisma.discordUser.create({
-            data: {
+        const message = exists ?
+            `${rest.username}, your account was succesfully updated! <:party_popper:123456789012345678>` :
+            `${rest.username}, your account was succesfully binded! <:party_popper:123456789012345678>`;
+        await this.prisma.discordUser.upsert({
+            where: { discordId: discordId },
+            update: { type: 'employee' },
+            create: {
                 discordId: discordId,
-                ...payload
+                ...rest
             }
-        });
-        return `${payload.username}, your account was succesfully binded! <:party_popper:123456789012345678>`;
+        })
+        return message;
+    }
+
+    async bindIntern(payload: { discordId: string, username: string, discriminator: string }): Promise<string> {
+        const { discordId, ...rest } = payload;
+        const exists = await this.exists(discordId);
+        const message = exists ?
+            `${rest.username}, your account was succesfully updated! <:party_popper:123456789012345678>` :
+            `${rest.username}, your account was succesfully binded! <:party_popper:123456789012345678>`;
+        await this.prisma.discordUser.upsert({
+            where: { discordId: discordId },
+            update: { type: 'intern' },
+            create: {
+                discordId: discordId,
+                type: 'intern',
+                ...rest
+            }
+        })
+        return message;
     }
 
     async inactiveUser(): Promise<void> {

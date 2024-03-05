@@ -105,7 +105,29 @@ export class TimeSheetService {
 
         const attendance = await this.prisma.timeSheet.findMany({
             where: {
-                signatureDate: signature
+                signatureDate: signature,
+                discordUser: {
+                    type: 'employee'
+                }
+            },
+            orderBy: {
+                created_at: 'asc'
+            }
+        });
+
+        return this.attendanceResult(attendance, now);
+    }
+
+    async attendanceIntern(): Promise<string> {
+        const now = new Date();
+        const signature = moment(now).format('YYYY-MM-DD');
+
+        const attendance = await this.prisma.timeSheet.findMany({
+            where: {
+                signatureDate: signature,
+                discordUser: {
+                    type: 'intern'
+                }
             },
             orderBy: {
                 created_at: 'asc'
@@ -144,7 +166,7 @@ export class TimeSheetService {
                 break;
         }
 
-        if (attendance.length <= 0) return `${motivation}.\nEmployees ghosted us, no one is present! <:ghost:123456789012345678>`;
+        if (attendance.length <= 0) return `${motivation}.\nEveryone ghosted us, no one is present! <:ghost:123456789012345678>`;
 
         if (attendance.length === 1) return `${motivation}.\nNot all heroes wear capes! Solo yern?\n1. ${attendance[0].username}, Logged @ ${moment(attendance[0].timeIn).format("HH:mm")} - Expected logout @ ${moment(attendance[0].expectedTimeOut).format("HH:mm")} <:superhero:123456789012345678>`;
 
@@ -173,12 +195,42 @@ export class TimeSheetService {
         const [users, actives] = await this.prisma.$transaction([
             this.prisma.discordUser.findMany({
                 where: {
-                    active: true
+                    active: true,
+                    type: 'employee'
                 }
             }),
             this.prisma.timeSheet.findMany({
                 where: {
-                    signatureDate: signature
+                    signatureDate: signature,
+                    discordUser: {
+                        type: 'employee'
+                    }
+                }
+            })
+        ]);
+
+        const absents = users.filter(user => !actives.some(active => active.discordUserId === user.discordId));
+
+        return this.absentResult(absents, now);
+    }
+
+    async absentIntern(): Promise<string> {
+        const now = new Date();
+        const signature = moment(now).format('YYYY-MM-DD');
+
+        const [users, actives] = await this.prisma.$transaction([
+            this.prisma.discordUser.findMany({
+                where: {
+                    active: true,
+                    type: 'intern'
+                }
+            }),
+            this.prisma.timeSheet.findMany({
+                where: {
+                    signatureDate: signature,
+                    discordUser: {
+                        type: 'intern'
+                    }
                 }
             })
         ]);
@@ -216,7 +268,7 @@ export class TimeSheetService {
                 motivation = `Today is ${dateToday} \nSerene Sunday: Take a moment of calm and relaxation. Linggo ngayon ah sipag mo naman! <:exploding_head:123456789012345678>`;
                 break;
         }
-        if (absents.length <= 0) return `${motivation}.\nAll Employees are here, everyone is present! <:star_struck:123456789012345678>`;
+        if (absents.length <= 0) return `${motivation}.\nEveryone is present! <:star_struck:123456789012345678>`;
 
         if (absents.length >= 1) {
             let result = `${motivation}\nAbsent(s) List. <:ghost:123456789012345678>\n`;

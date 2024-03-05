@@ -13,7 +13,7 @@ export class AppController {
 
   @Post('bind')
   async bindUser(@Body() body: DiscordUserDto): Promise<string> {
-    return await this.userService.bindUser(body);
+    return await this.userService.setBind(body);
   }
 
   @Post('set-time')
@@ -26,8 +26,18 @@ export class AppController {
     return await this.timeSheetService.attendance();
   }
 
+  @Get('attendance-intern')
+  async attendanceIntern(): Promise<string> {
+    return await this.timeSheetService.attendanceIntern();
+  }
+
   @Get('absent')
   async absent() {
     return await this.timeSheetService.absent();
+  }
+
+  @Get('absent-intern')
+  async absentIntern() {
+    return await this.timeSheetService.absentIntern();
   }
 }
