@@ -186,20 +186,23 @@ export class TimeSheetService {
 
         if (attendance.length <= 0) return `${motivation}.\nEveryone ghosted us, no one is present! <:ghost:123456789012345678>`;
 
-        if (attendance.length === 1) return `${motivation}.\nNot all heroes wear capes! Solo yern?\n1. ${attendance[0].username}, Logged @ ${moment(attendance[0].timeIn).format("HH:mm")} - Expected logout @ ${moment(attendance[0].expectedTimeOut).format("HH:mm")} <:superhero:123456789012345678>`;
+        if (attendance.length === 1) return `${motivation}.\nNot all heroes wear capes! Solo yern?\n1. ${attendance[0].username}, Logged @ ${moment(attendance[0].timeIn).format("HH:mm")} - logout @ ${attendance[0].timeOut ? moment(attendance[0].timeOut).format("HH:mm") : moment(attendance[0].expectedTimeOut).format("HH:mm")} <:superhero:123456789012345678>`;
 
         if (attendance.length > 1) {
-            let result = `${motivation}\nExpected Time Ranges <:clock9:123456789012345678>.\n`;
+            let result = `${motivation}\nTime Ranges <:clock9:123456789012345678>.\n`;
             attendance.forEach((item, index) => {
                 const timeIn = moment(item.timeIn).format("HH:mm");
-                let expectedTimeOut: string;
-                if (item.expectedTimeOut) {
-                    expectedTimeOut = moment(item.expectedTimeOut).format("HH:mm")
-                } else {
+                let timeOut: string;
+                let icon: string;
+                if (!item.timeOut) {
+                    icon = '🙅‍♀️'
                     const setTimeOut = moment(item.timeIn).add(9, 'hours').toDate();
-                    expectedTimeOut = moment(setTimeOut).format("HH:mm")
+                    timeOut = moment(setTimeOut).format("HH:mm")
+                } else {
+                    icon = '🙋‍♀️'
+                    timeOut = moment(item.timeOut).format("HH:mm")
                 }
-                result += `${index + 1}. ${item.username}, ${timeIn} - ${expectedTimeOut}.\n`;
+                result += `${index + 1}. ${item.username}, ${timeIn} - ${timeOut} ${icon}.\n`;
 
             });
             return result;
