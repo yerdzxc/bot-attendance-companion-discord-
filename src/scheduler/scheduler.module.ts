@@ -4,6 +4,6 @@ import { UserModule } from '../user/user.module';
 
 @Module({
   imports: [UserModule],
-  providers: [SchedulerService]
+  providers: [SchedulerService],
 })
-export class SchedulerModule { }
+export class SchedulerModule {}
