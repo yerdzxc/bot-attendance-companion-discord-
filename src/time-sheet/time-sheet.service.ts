@@ -68,6 +68,7 @@ export class TimeSheetService {
             username: setTimeDto.username,
             lastAccess: signatureDate,
             active: true,
+            updated_at: new Date(),
           })
           .where(eq(DiscordUser.discordId, setTimeDto.discordId));
       });
@@ -96,6 +97,7 @@ export class TimeSheetService {
         visibleTotal: Math.floor(totalHours),
         updated_at: new Date(),
       })
+      .where(eq(TimeSheet.id, lastRecord.id))
       .returning();
 
     if (!transaction)
