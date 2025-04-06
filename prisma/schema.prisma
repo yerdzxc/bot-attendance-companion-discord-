@@ -28,6 +28,10 @@ model DiscordUser {
   timesheets    TimeSheet[]
   created_at    DateTime    @default(now())
   updated_at    DateTime?   @updatedAt
+
+  @@index([active])
+  @@index([type])
+  @@index([type, active])
 }
 
 model TimeSheet {
@@ -43,4 +47,7 @@ model TimeSheet {
   expectedTimeOut DateTime?
   created_at      DateTime    @default(now())
   updated_at      DateTime?   @updatedAt
+
+  @@index([discordUserId])
+  @@index([discordUserId, signatureDate])
 }
