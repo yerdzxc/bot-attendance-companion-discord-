@@ -49,5 +49,5 @@ model TimeSheet {
   updated_at      DateTime?   @updatedAt
 
   @@index([discordUserId])
-  @@index([discordUserId, signatureDate])
+  @@index([signatureDate])
 }
