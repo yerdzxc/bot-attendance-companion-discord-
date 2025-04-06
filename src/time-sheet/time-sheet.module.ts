@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 import { TimeSheetService } from './time-sheet.service';
-import { PrismaService } from '../prisma.service';
-import { UserModule } from '../user/user.module';
+import { UserModule } from '@app/user/user.module';
+import { DrizzleModule } from '@app/common/drizzle/drizzle.module';
 
 @Module({
-  imports: [UserModule],
-  providers: [TimeSheetService, PrismaService],
-  exports: [TimeSheetService]
+  imports: [DrizzleModule, UserModule],
+  providers: [TimeSheetService],
+  exports: [TimeSheetService],
 })
-export class TimeSheetModule { }
+export class TimeSheetModule {}
