@@ -17,13 +17,15 @@ export class UserService {
     return exists ? true : false;
   }
 
-  async setBind(discordUserDto: DiscordUserDto) {
+  async setBind(discordUserDto: DiscordUserDto): Promise<string> {
     const { command, ...rest } = discordUserDto;
     switch (command) {
       case 'bind':
         return await this.bindUser(rest);
       case 'bind-intern':
         return await this.bindIntern(rest);
+      default:
+        return 'Invalid Command <:woman_facepalming:123456789012345678>';
     }
   }
 
