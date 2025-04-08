@@ -14,9 +14,10 @@ export class SignatureGuard implements CanActivate {
   canActivate(ctx: ExecutionContext): boolean {
     const request = ctx.switchToHttp().getRequest();
     const clientSignature = request.headers['x-signature'] as string;
+    const timestamp = request.headers['x-signature-timestamp'] as string;
 
-    if (!clientSignature) {
-      throw new UnauthorizedException('Missing signature');
+    if (!clientSignature || !timestamp) {
+      throw new UnauthorizedException('Missing required headers!');
     }
 
     const body =
@@ -27,13 +28,18 @@ export class SignatureGuard implements CanActivate {
     const secret = this.config.get<string>('SIGNING_SECRET');
     if (!secret) throw new Error('SIGNING_SECRET not set');
 
+    if (Math.abs(Date.now()) - new Date(timestamp).getTime() > 60000) {
+      throw new UnauthorizedException('Invalid signature');
+    }
+
     const expectedSignature = crypto
       .createHmac('sha256', secret)
-      .update(body)
+      .update(`${timestamp}:${body}`)
       .digest('hex');
 
-    if (expectedSignature.length !== clientSignature.length)
+    if (expectedSignature.length !== clientSignature.length) {
       throw new UnauthorizedException('Invalid signature');
+    }
 
     const valid = crypto.timingSafeEqual(
       Buffer.from(expectedSignature),
