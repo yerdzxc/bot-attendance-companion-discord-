@@ -44,11 +44,13 @@ export class TimeSheetService {
         return lastRecord.timeOut
           ? `You're already logged out. Run '/time-in' to initialize timestamps!. <:woman_facepalming:123456789012345678>`
           : this.timeOut(lastRecord);
+      default:
+        return 'Invalid Command <:woman_facepalming:123456789012345678>';
     }
-    return 'Invalid Command <:woman_facepalming:123456789012345678>';
   }
 
   async timeIn(setTimeDto: SetTimeDto): Promise<string> {
+    const { discordId, username } = setTimeDto;
     const timeIn = new Date();
     const signatureDate = moment(timeIn).format('YYYY-MM-DD');
     const expectedTimeOut = moment(timeIn).add(9, 'hours').toDate();
@@ -56,21 +58,21 @@ export class TimeSheetService {
     try {
       await this.db.transaction(async (tx) => {
         await tx.insert(TimeSheet).values({
-          discordUserId: setTimeDto.discordId,
-          username: setTimeDto.username,
-          timeIn: timeIn,
-          signatureDate: signatureDate,
-          expectedTimeOut: expectedTimeOut,
+          discordUserId: discordId,
+          username,
+          timeIn,
+          signatureDate,
+          expectedTimeOut,
         });
         await tx
           .update(DiscordUser)
           .set({
-            username: setTimeDto.username,
+            username,
             lastAccess: signatureDate,
             active: true,
             updated_at: new Date(),
           })
-          .where(eq(DiscordUser.discordId, setTimeDto.discordId));
+          .where(eq(DiscordUser.discordId, discordId));
       });
     } catch (err: any) {
       console.log(err?.response || err);
@@ -92,7 +94,7 @@ export class TimeSheetService {
     const transaction = await this.db
       .update(TimeSheet)
       .set({
-        timeOut: timeOut,
+        timeOut,
         timeTotal: totalHours.toString(),
         visibleTotal: Math.floor(totalHours),
         updated_at: new Date(),

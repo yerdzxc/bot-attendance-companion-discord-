@@ -15,5 +15,5 @@ export class DiscordUserDto {
     required: true,
     example: 'bind',
   })
-  command: string;
+  command: 'bind' | 'bind-intern';
 }

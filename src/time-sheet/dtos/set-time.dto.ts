@@ -12,5 +12,5 @@ export class SetTimeDto {
     required: true,
     example: 'time-in',
   })
-  command: string;
+  command: 'time-in' | 'time-out';
 }
