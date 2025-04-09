@@ -14,7 +14,7 @@ import { getFormattedDate } from './utils/date';
 describe('AppController (e2e)', () => {
   let app: INestApplication;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
@@ -32,11 +32,13 @@ describe('AppController (e2e)', () => {
 
   it('(GET) /api/test', async () => {
     const headers = generateHeaders();
-    const res = await request(app.getHttpServer())
+    return await request(app.getHttpServer())
       .get('/api/test')
       .set(headers)
-      .expect(200);
-    expect(typeof res.body).toBe('boolean');
+      .expect(200)
+      .expect((res) => {
+        expect(typeof res.body).toBe('boolean');
+      });
   });
 
   it('(POST) /api/bind - bind user', async () => {
@@ -47,13 +49,14 @@ describe('AppController (e2e)', () => {
       command: 'bind',
     };
     const headers = generateHeaders(payload);
-    const res = await request(app.getHttpServer())
+    return await request(app.getHttpServer())
       .post('/api/bind')
       .set(headers)
       .send(payload)
-      .expect(201);
-
-    expect(typeof res.text).toBe('string');
+      .expect(201)
+      .expect((res) => {
+        expect(typeof res.text).toBe('string');
+      });
   });
 
   it('(POST) /api/set-time - time-in', async () => {
@@ -63,13 +66,14 @@ describe('AppController (e2e)', () => {
       command: 'time-in',
     };
     const headers = generateHeaders(payload);
-    const res = await request(app.getHttpServer())
+    return await request(app.getHttpServer())
       .post('/api/set-time')
       .set(headers)
       .send(payload)
-      .expect(201);
-
-    expect(typeof res.text).toBe('string');
+      .expect(201)
+      .expect((res) => {
+        expect(typeof res.text).toBe('string');
+      });
   });
 
   it('(POST) /api/set-time - time-out', async () => {
@@ -79,13 +83,14 @@ describe('AppController (e2e)', () => {
       command: 'time-out',
     };
     const headers = generateHeaders(payload);
-    const res = await request(app.getHttpServer())
+    return await request(app.getHttpServer())
       .post('/api/set-time')
       .set(headers)
       .send(payload)
-      .expect(201);
-
-    expect(typeof res.text).toBe('string');
+      .expect(201)
+      .expect((res) => {
+        expect(typeof res.text).toBe('string');
+      });
   });
 
   it('(GET) /api/attendance', async () => {
