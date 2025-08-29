@@ -16,6 +16,8 @@ RUN bun install
 
 RUN bun prisma generate
 
+RUN bun run build
+
 # ============================
 # 2. Build production
 # ============================
