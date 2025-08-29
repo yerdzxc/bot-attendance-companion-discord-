@@ -6,7 +6,7 @@ RUN ln -s /usr/local/bin/bunx /usr/local/bin/npx && ln -s /usr/local/bin/bun /us
 # ============================
 # 1. Build stage
 # ============================
-FROM base AS builder
+FROM imbios/bun-node:23-alpine-git AS builder
 
 # Copy everything
 COPY . ./
