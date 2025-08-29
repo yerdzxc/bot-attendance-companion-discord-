@@ -14,7 +14,7 @@ COPY . ./
 # Install dependencies
 RUN bun install
 
-bun prisma generate
+RUN bun prisma generate
 
 # ============================
 # 2. Build production
@@ -28,16 +28,14 @@ RUN apk add --no-cache bash && bun install -p && \
     bunx clean-modules -y && \
     bunx node-prune
 
-COPY --from=builder /app/@central-app ./node_modules/@central-app
-
 # ============================
 # 3. Production stage
 # ============================
 FROM base AS final
 
 # Copy built app from builder
-COPY --chown=bun:bun --from=builder		/app/dist			./dist
-COPY --chown=bun:bun --from=production-module	/app/node_modules		./node_modules
+COPY --chown=bun:bun --from=builder		/app/dist				./dist
+COPY --chown=bun:bun --from=production-module	/app/node_modules			./node_modules
 COPY --chown=bun:bun				./.scripts/post-deploy.sh	./
 
 # Set environment variables (can also be passed during `docker run`)
