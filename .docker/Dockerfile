@@ -38,7 +38,8 @@ FROM base AS final
 # Copy built app from builder
 COPY --chown=bun:bun --from=builder		/app/dist				./dist
 COPY --chown=bun:bun --from=production-module	/app/node_modules			./node_modules
-COPY --chown=bun:bun				./.scripts/post-deploy.sh	./
+COPY --chown=bun:bun				./.scripts/post-deploy.sh		./
+COPY						./prisma				./prisma
 
 # Set environment variables (can also be passed during `docker run`)
 ENV NODE_ENV=production
