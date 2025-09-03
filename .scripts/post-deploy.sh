@@ -2,6 +2,8 @@
 
 set -e
 
+: "${TZ:=Asia/Manila}"
+export TZ
 
 echo "Starting post-deployment steps..."
 
