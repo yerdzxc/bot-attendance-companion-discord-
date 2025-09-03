@@ -27,7 +27,7 @@ FROM base AS production-module
 COPY --from=builder /app/package.json /app/bun.lock	./
 
 # Optimize node_modules
-RUN apk add --no-cache bash && bun install -p && \
+RUN apk add --no-cache bash tzdata && bun install -p && \
     bunx clean-modules -y && \
     bunx node-prune
 
