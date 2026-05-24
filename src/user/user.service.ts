@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import * as moment from 'moment';
 import { DrizzleService } from '@app/common/types/drizzle';
 import { DRIZZLE } from '@app/common/drizzle/drizzle.module';
-import { eq, inArray } from 'drizzle-orm';
+import { eq, inArray, and } from 'drizzle-orm';
 import { DiscordUser } from '@app/common/drizzle/schema';
 import { DiscordUserDto } from './dtos/discord-user.dto';
 
@@ -121,6 +121,23 @@ export class UserService {
       .where(eq(DiscordUser.discordId, discordId));
 
     return `${username}, your display name was updated. <:party_popper:123456789012345678>`;
+  }
+
+  async listInactive(type?: 'employee' | 'intern') {
+    const filters = [eq(DiscordUser.active, false)];
+    if (type) filters.push(eq(DiscordUser.type, type));
+    return this.db.query.DiscordUser.findMany({
+      where: and(...filters),
+      orderBy: DiscordUser.username,
+    });
+  }
+
+  async setActive(discordId: string, active: boolean): Promise<string> {
+    await this.db
+      .update(DiscordUser)
+      .set({ active, updated_at: new Date() })
+      .where(eq(DiscordUser.discordId, discordId));
+    return active ? 'User reactivated.' : 'User deactivated.';
   }
 
   private buildMessage(exists: boolean, username: string): string {

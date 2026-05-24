@@ -204,4 +204,14 @@ export class ExportController {
   async removeLeave(@Query('discordId') discordId: string, @Query('date') date: string): Promise<string> {
     return this.leaveService.remove(discordId, date);
   }
+
+  @Get('api/users/inactive')
+  async listInactive(@Query('type') type?: 'employee' | 'intern') {
+    return this.userService.listInactive(type);
+  }
+
+  @Post('api/users/set-active')
+  async setActive(@Body() body: { discordId: string; active: boolean }): Promise<string> {
+    return this.userService.setActive(body.discordId, body.active);
+  }
 }
