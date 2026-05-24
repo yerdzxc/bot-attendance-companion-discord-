@@ -1,10 +1,14 @@
 import { Controller, Get, Query, Res, Header } from '@nestjs/common';
 import { ExportService } from './export.service';
+import { TimeSheetService } from '@app/time-sheet/time-sheet.service';
 import { FastifyReply } from 'fastify';
 
 @Controller()
 export class ExportController {
-  constructor(private readonly exportService: ExportService) {}
+  constructor(
+    private readonly exportService: ExportService,
+    private readonly timeSheetService: TimeSheetService,
+  ) {}
 
   @Get('export')
   @Header('Content-Type', 'text/html')
@@ -134,5 +138,24 @@ export class ExportController {
     res.header('Content-Type', 'text/csv; charset=utf-8');
     res.header('Content-Disposition', `attachment; filename="KargaX Attendance ${fromDate} to ${toDate}.csv"`);
     res.send(csv);
+  }
+
+  @Get('api/export/data')
+  async exportData(
+    @Query('from') from: string,
+    @Query('to') to: string,
+    @Query('type') type: 'employee' | 'intern' = 'employee',
+  ) {
+    const today = new Date();
+    const monday = new Date(today);
+    monday.setDate(today.getDate() - ((today.getDay() + 6) % 7));
+    const sunday = new Date(monday);
+    sunday.setDate(monday.getDate() + 6);
+    const fmt = (d: Date) => d.toISOString().split('T')[0];
+
+    const fromDate = from || fmt(monday);
+    const toDate = to || fmt(sunday);
+
+    return this.timeSheetService.getAttendanceRange(fromDate, toDate, type);
   }
 }
