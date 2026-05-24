@@ -102,6 +102,19 @@ export class UserService {
     }
   }
 
+  async setName(discordId: string, username: string): Promise<string> {
+    const exists = await this.exists(discordId);
+    if (!exists)
+      return `Account not found. Run '/bind' first. <:woman_facepalming:123456789012345678>`;
+
+    await this.db
+      .update(DiscordUser)
+      .set({ username, updated_at: new Date() })
+      .where(eq(DiscordUser.discordId, discordId));
+
+    return `${username}, your display name was updated. <:party_popper:123456789012345678>`;
+  }
+
   private buildMessage(exists: boolean, username: string): string {
     return `${username}, your account was succesfully ${
       exists ? 'updated' : 'binded'

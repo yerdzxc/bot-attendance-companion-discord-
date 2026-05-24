@@ -3,9 +3,17 @@ import { DiscordUserDto } from './user/dtos/discord-user.dto';
 import { UserService } from './user/user.service';
 import { SetTimeDto } from './time-sheet/dtos/set-time.dto';
 import { TimeSheetService } from './time-sheet/time-sheet.service';
-import { ApiQuery, ApiTags } from '@nestjs/swagger';
+import { ApiProperty, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { SignatureGuard } from './common/guards/signature-guard';
 import { ApiSigningSecretDecorator } from './common/decorators/api-signing-secret.decorator';
+
+class SetNameDto {
+  @ApiProperty({ example: '12312312' })
+  discordId: string;
+
+  @ApiProperty({ example: 'Benjie Abrio' })
+  username: string;
+}
 
 @ApiTags('APP')
 @Controller('api')
@@ -25,6 +33,11 @@ export class AppController {
   @Post('bind')
   async bindUser(@Body() body: DiscordUserDto): Promise<string> {
     return await this.userService.setBind(body);
+  }
+
+  @Post('set-name')
+  async setName(@Body() body: SetNameDto): Promise<string> {
+    return await this.userService.setName(body.discordId, body.username);
   }
 
   @Post('set-time')
