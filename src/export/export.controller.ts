@@ -1,6 +1,7 @@
-import { Controller, Get, Query, Res, Header } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, Res, Header } from '@nestjs/common';
 import { ExportService } from './export.service';
 import { TimeSheetService } from '@app/time-sheet/time-sheet.service';
+import { UserService } from '@app/user/user.service';
 import { FastifyReply } from 'fastify';
 
 @Controller()
@@ -8,6 +9,7 @@ export class ExportController {
   constructor(
     private readonly exportService: ExportService,
     private readonly timeSheetService: TimeSheetService,
+    private readonly userService: UserService,
   ) {}
 
   @Get('export')
@@ -157,5 +159,10 @@ export class ExportController {
     const toDate = to || fmt(sunday);
 
     return this.timeSheetService.getAttendanceRange(fromDate, toDate, type);
+  }
+
+  @Post('api/set-name')
+  async setName(@Body() body: { discordId: string; username: string }): Promise<string> {
+    return this.userService.setName(body.discordId, body.username);
   }
 }
