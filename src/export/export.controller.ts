@@ -205,9 +205,9 @@ export class ExportController {
     return this.leaveService.remove(discordId, date);
   }
 
-  @Get('api/users/inactive')
-  async listInactive(@Query('type') type?: 'employee' | 'intern') {
-    return this.userService.listInactive(type);
+  @Get('api/users')
+  async listUsers(@Query('type') type?: 'employee' | 'intern', @Query('active') active?: string) {
+    return this.userService.listUsers(type, active === 'true' ? true : active === 'false' ? false : undefined);
   }
 
   @Post('api/users/set-active')

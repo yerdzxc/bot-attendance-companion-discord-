@@ -123,11 +123,12 @@ export class UserService {
     return `${username}, your display name was updated. <:party_popper:123456789012345678>`;
   }
 
-  async listInactive(type?: 'employee' | 'intern') {
-    const filters = [eq(DiscordUser.active, false)];
+  async listUsers(type?: 'employee' | 'intern', active?: boolean) {
+    const filters: any[] = [];
+    if (active !== undefined) filters.push(eq(DiscordUser.active, active));
     if (type) filters.push(eq(DiscordUser.type, type));
     return this.db.query.DiscordUser.findMany({
-      where: and(...filters),
+      where: filters.length ? and(...filters) : undefined,
       orderBy: DiscordUser.username,
     });
   }
