@@ -102,6 +102,14 @@ export class UserService {
     }
   }
 
+  async setRestDay(discordId: string, restDay: string | null): Promise<string> {
+    await this.db
+      .update(DiscordUser)
+      .set({ restDay, updated_at: new Date() })
+      .where(eq(DiscordUser.discordId, discordId));
+    return restDay ? `Rest day set to ${restDay}.` : 'Rest day cleared.';
+  }
+
   async setName(discordId: string, username: string): Promise<string> {
     const exists = await this.exists(discordId);
     if (!exists)

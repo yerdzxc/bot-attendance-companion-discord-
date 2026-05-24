@@ -17,6 +17,14 @@ enum UserType {
   intern
 }
 
+enum LeaveType {
+  SL
+  VL
+  EL
+  BDL
+  OB
+}
+
 model DiscordUser {
   id            Int         @id @default(autoincrement())
   discordId     String      @unique
@@ -25,7 +33,9 @@ model DiscordUser {
   active        Boolean     @default(true)
   lastAccess    String?
   type          UserType    @default(employee)
+  restDay       String?
   timesheets    TimeSheet[]
+  leaves        Leave[]
   created_at    DateTime    @default(now())
   updated_at    DateTime?   @updatedAt
 
@@ -50,4 +60,28 @@ model TimeSheet {
 
   @@index([discordUserId])
   @@index([signatureDate])
+}
+
+model Leave {
+  id            Int        @id @default(autoincrement())
+  discordUser   DiscordUser @relation(fields: [discordUserId], references: [discordId])
+  discordUserId String
+  date          String
+  type          LeaveType
+  note          String?
+  created_at    DateTime   @default(now())
+  updated_at    DateTime?  @updatedAt
+
+  @@unique([discordUserId, date])
+  @@index([discordUserId])
+  @@index([date])
+}
+
+model Holiday {
+  id         Int      @id @default(autoincrement())
+  date       String   @unique
+  name       String
+  created_at DateTime @default(now())
+
+  @@index([date])
 }

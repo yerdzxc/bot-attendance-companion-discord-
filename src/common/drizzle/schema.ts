@@ -1,7 +1,9 @@
 import { relations } from 'drizzle-orm'
-import { boolean, foreignKey, integer, pgEnum, pgTable, serial, text, timestamp } from 'drizzle-orm/pg-core'
+import { boolean, foreignKey, integer, pgEnum, pgTable, serial, text, timestamp, uniqueIndex } from 'drizzle-orm/pg-core'
 
 export const UserType = pgEnum('UserType', ['employee', 'intern'])
+
+export const LeaveType = pgEnum('LeaveType', ['SL', 'VL', 'EL', 'BDL', 'OB'])
 
 export const DiscordUser = pgTable('DiscordUser', {
 	id: serial('id').notNull().primaryKey(),
@@ -11,6 +13,7 @@ export const DiscordUser = pgTable('DiscordUser', {
 	active: boolean('active').notNull().default(true),
 	lastAccess: text('lastAccess'),
 	type: UserType('type').notNull().default("employee"),
+	restDay: text('restDay'),
 	created_at: timestamp('created_at', { precision: 3 }).notNull().defaultNow(),
 	updated_at: timestamp('updated_at', { precision: 3 })
 });
@@ -37,9 +40,39 @@ export const TimeSheet = pgTable('TimeSheet', {
 		.onUpdate('cascade')
 }));
 
+export const Leave = pgTable('Leave', {
+	id: serial('id').notNull().primaryKey(),
+	discordUserId: text('discordUserId').notNull(),
+	date: text('date').notNull(),
+	type: LeaveType('type').notNull(),
+	note: text('note'),
+	created_at: timestamp('created_at', { precision: 3 }).notNull().defaultNow(),
+	updated_at: timestamp('updated_at', { precision: 3 })
+}, (Leave) => ({
+	'Leave_discordUser_fkey': foreignKey({
+		name: 'Leave_discordUser_fkey',
+		columns: [Leave.discordUserId],
+		foreignColumns: [DiscordUser.discordId]
+	})
+		.onDelete('cascade')
+		.onUpdate('cascade'),
+	'Leave_discordUserId_date_unique_idx': uniqueIndex('Leave_discordUserId_date_key')
+		.on(Leave.discordUserId, Leave.date)
+}));
+
+export const Holiday = pgTable('Holiday', {
+	id: serial('id').notNull().primaryKey(),
+	date: text('date').notNull().unique(),
+	name: text('name').notNull(),
+	created_at: timestamp('created_at', { precision: 3 }).notNull().defaultNow()
+});
+
 export const DiscordUserRelations = relations(DiscordUser, ({ many }) => ({
 	timesheets: many(TimeSheet, {
 		relationName: 'DiscordUserToTimeSheet'
+	}),
+	leaves: many(Leave, {
+		relationName: 'DiscordUserToLeave'
 	})
 }));
 
@@ -47,6 +80,14 @@ export const TimeSheetRelations = relations(TimeSheet, ({ one }) => ({
 	discordUser: one(DiscordUser, {
 		relationName: 'DiscordUserToTimeSheet',
 		fields: [TimeSheet.discordUserId],
+		references: [DiscordUser.discordId]
+	})
+}));
+
+export const LeaveRelations = relations(Leave, ({ one }) => ({
+	discordUser: one(DiscordUser, {
+		relationName: 'DiscordUserToLeave',
+		fields: [Leave.discordUserId],
 		references: [DiscordUser.discordId]
 	})
 }));

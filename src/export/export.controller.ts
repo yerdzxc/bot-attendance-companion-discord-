@@ -1,7 +1,9 @@
-import { Body, Controller, Get, Post, Query, Res, Header } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Post, Put, Query, Res, Header } from '@nestjs/common';
 import { ExportService } from './export.service';
 import { TimeSheetService } from '@app/time-sheet/time-sheet.service';
 import { UserService } from '@app/user/user.service';
+import { HolidayService } from '@app/holiday/holiday.service';
+import { LeaveService } from '@app/leave/leave.service';
 import { FastifyReply } from 'fastify';
 
 @Controller()
@@ -10,6 +12,8 @@ export class ExportController {
     private readonly exportService: ExportService,
     private readonly timeSheetService: TimeSheetService,
     private readonly userService: UserService,
+    private readonly holidayService: HolidayService,
+    private readonly leaveService: LeaveService,
   ) {}
 
   @Get('export')
@@ -164,5 +168,40 @@ export class ExportController {
   @Post('api/set-name')
   async setName(@Body() body: { discordId: string; username: string }): Promise<string> {
     return this.userService.setName(body.discordId, body.username);
+  }
+
+  @Post('api/set-rest-day')
+  async setRestDay(@Body() body: { discordId: string; restDay: string | null }): Promise<string> {
+    return this.userService.setRestDay(body.discordId, body.restDay);
+  }
+
+  @Get('api/holidays')
+  async listHolidays() {
+    return this.holidayService.list();
+  }
+
+  @Post('api/holidays')
+  async upsertHoliday(@Body() body: { date: string; name: string }): Promise<string> {
+    return this.holidayService.upsert(body.date, body.name);
+  }
+
+  @Delete('api/holidays')
+  async removeHoliday(@Query('date') date: string): Promise<string> {
+    return this.holidayService.remove(date);
+  }
+
+  @Get('api/leaves')
+  async listLeaves(@Query('from') from?: string, @Query('to') to?: string) {
+    return this.leaveService.list(from, to);
+  }
+
+  @Post('api/leaves')
+  async upsertLeave(@Body() body: { discordId: string; date: string; type: string; note?: string }): Promise<string> {
+    return this.leaveService.upsert(body.discordId, body.date, body.type, body.note);
+  }
+
+  @Delete('api/leaves')
+  async removeLeave(@Query('discordId') discordId: string, @Query('date') date: string): Promise<string> {
+    return this.leaveService.remove(discordId, date);
   }
 }

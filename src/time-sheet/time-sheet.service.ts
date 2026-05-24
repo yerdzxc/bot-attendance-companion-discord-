@@ -4,8 +4,8 @@ import { UserService } from '@app/user/user.service';
 import * as moment from 'moment';
 import { DrizzleService } from '@app/common/types/drizzle';
 import { DRIZZLE } from '@app/common/drizzle/drizzle.module';
-import { and, desc, eq, gte, lte } from 'drizzle-orm';
-import { DiscordUser, TimeSheet } from '@app/common/drizzle/schema';
+import { and, desc, eq, gte, lte, inArray } from 'drizzle-orm';
+import { DiscordUser, TimeSheet, Leave, Holiday } from '@app/common/drizzle/schema';
 import {
   DiscordUserModel,
   TimeSheetModel,
@@ -366,6 +366,7 @@ export class TimeSheetService {
       .select({
         discordId: DiscordUser.discordId,
         username: DiscordUser.username,
+        restDay: DiscordUser.restDay,
       })
       .from(DiscordUser)
       .where(
@@ -373,6 +374,16 @@ export class TimeSheetService {
       )
       .orderBy(DiscordUser.username);
 
-    return { records, users };
+    const leaves = await this.db
+      .select()
+      .from(Leave)
+      .where(and(gte(Leave.date, from), lte(Leave.date, to)));
+
+    const holidays = await this.db
+      .select()
+      .from(Holiday)
+      .where(and(gte(Holiday.date, from), lte(Holiday.date, to)));
+
+    return { records, users, leaves, holidays };
   }
 }

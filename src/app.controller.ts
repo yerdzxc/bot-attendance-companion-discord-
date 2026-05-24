@@ -35,10 +35,7 @@ export class AppController {
     return await this.userService.setBind(body);
   }
 
-  @Post('set-name')
-  async setName(@Body() body: SetNameDto): Promise<string> {
-    return await this.userService.setName(body.discordId, body.username);
-  }
+
 
   @Post('set-time')
   async setTime(@Body() body: SetTimeDto): Promise<string> {
