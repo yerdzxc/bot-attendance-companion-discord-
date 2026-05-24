@@ -214,4 +214,9 @@ export class ExportController {
   async setActive(@Body() body: { discordId: string; active: boolean }): Promise<string> {
     return this.userService.setActive(body.discordId, body.active);
   }
+
+  @Post('api/correct-time')
+  async correctTime(@Body() body: { discordUserId: string; signatureDate: string; timeIn?: string; timeOut?: string }): Promise<string> {
+    return this.timeSheetService.correctTime(body.discordUserId, body.signatureDate, body.timeIn, body.timeOut);
+  }
 }

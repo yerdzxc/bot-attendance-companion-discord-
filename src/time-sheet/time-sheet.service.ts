@@ -386,4 +386,24 @@ export class TimeSheetService {
 
     return { records, users, leaves, holidays };
   }
+
+  async correctTime(discordUserId: string, signatureDate: string, timeIn?: string, timeOut?: string): Promise<string> {
+    const record = await this.db.query.TimeSheet.findFirst({
+      where: and(eq(TimeSheet.discordUserId, discordUserId), eq(TimeSheet.signatureDate, signatureDate)),
+    });
+    if (!record) return `No record found for ${signatureDate}.`;
+
+    const updates: any = { updated_at: new Date() };
+    if (timeIn) {
+      const [h, m] = timeIn.split(':');
+      updates.timeIn = new Date(`${signatureDate}T${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:00`);
+    }
+    if (timeOut) {
+      const [h, m] = timeOut.split(':');
+      updates.timeOut = new Date(`${signatureDate}T${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:00`);
+    }
+
+    await this.db.update(TimeSheet).set(updates).where(eq(TimeSheet.id, record.id));
+    return `Time corrected for ${signatureDate}.`;
+  }
 }
