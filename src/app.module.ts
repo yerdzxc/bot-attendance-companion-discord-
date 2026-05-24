@@ -7,6 +7,7 @@ import { TimeSheetModule } from './time-sheet/time-sheet.module';
 import { SchedulerModule } from './scheduler/scheduler.module';
 import { DrizzleModule } from './common/drizzle/drizzle.module';
 import { ConfigModule } from '@nestjs/config';
+import { ExportModule } from './export/export.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { ConfigModule } from '@nestjs/config';
     TimeSheetModule,
     SchedulerModule,
     DrizzleModule,
+    ExportModule,
   ],
   controllers: [AppController],
   providers: [AppService],

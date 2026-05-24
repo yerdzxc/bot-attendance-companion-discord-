@@ -4,7 +4,7 @@ import { UserService } from '@app/user/user.service';
 import * as moment from 'moment';
 import { DrizzleService } from '@app/common/types/drizzle';
 import { DRIZZLE } from '@app/common/drizzle/drizzle.module';
-import { and, desc, eq } from 'drizzle-orm';
+import { and, desc, eq, gte, lte } from 'drizzle-orm';
 import { DiscordUser, TimeSheet } from '@app/common/drizzle/schema';
 import {
   DiscordUserModel,
@@ -340,5 +340,39 @@ export class TimeSheetService {
     }
 
     return motivation;
+  }
+
+  async getAttendanceRange(from: string, to: string, type: 'employee' | 'intern' = 'employee') {
+    const records = await this.db
+      .select({
+        discordUserId: TimeSheet.discordUserId,
+        username: TimeSheet.username,
+        timeIn: TimeSheet.timeIn,
+        timeOut: TimeSheet.timeOut,
+        signatureDate: TimeSheet.signatureDate,
+      })
+      .from(TimeSheet)
+      .leftJoin(DiscordUser, eq(TimeSheet.discordUserId, DiscordUser.discordId))
+      .where(
+        and(
+          gte(TimeSheet.signatureDate, from),
+          lte(TimeSheet.signatureDate, to),
+          eq(DiscordUser.type, type),
+        ),
+      )
+      .orderBy(TimeSheet.discordUserId, TimeSheet.signatureDate);
+
+    const users = await this.db
+      .select({
+        discordId: DiscordUser.discordId,
+        username: DiscordUser.username,
+      })
+      .from(DiscordUser)
+      .where(
+        and(eq(DiscordUser.active, true), eq(DiscordUser.type, type)),
+      )
+      .orderBy(DiscordUser.username);
+
+    return { records, users };
   }
 }
