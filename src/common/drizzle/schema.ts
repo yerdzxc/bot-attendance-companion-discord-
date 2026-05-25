@@ -52,6 +52,7 @@ export const Leave = pgTable('Leave', {
 	date: text('date').notNull(),
 	type: LeaveType('type').notNull(),
 	note: text('note'),
+	deleted: boolean('deleted').notNull(),
 	created_at: timestamp('created_at', { precision: 3 }).notNull().defaultNow(),
 	updated_at: timestamp('updated_at', { precision: 3 })
 }, (Leave) => ({
@@ -71,6 +72,7 @@ export const Holiday = pgTable('Holiday', {
 	date: text('date').notNull().unique(),
 	name: text('name').notNull(),
 	recurring: boolean('recurring').notNull(),
+	deleted: boolean('deleted').notNull(),
 	created_at: timestamp('created_at', { precision: 3 }).notNull().defaultNow()
 });
 

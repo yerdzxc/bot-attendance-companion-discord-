@@ -71,6 +71,7 @@ model Leave {
   date          String
   type          LeaveType
   note          String?
+  deleted       Boolean    @default(false)
   created_at    DateTime   @default(now())
   updated_at    DateTime?  @updatedAt
 
@@ -84,6 +85,7 @@ model Holiday {
   date       String    @unique
   name       String
   recurring  Boolean   @default(false)
+  deleted    Boolean   @default(false)
   created_at DateTime  @default(now())
 }
 

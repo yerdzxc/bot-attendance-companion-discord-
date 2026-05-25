@@ -9,6 +9,13 @@ export class HolidayService {
   constructor(@Inject(DRIZZLE) private db: DrizzleService) {}
 
   async list() {
+    return this.db.query.Holiday.findMany({
+      where: eq(Holiday.deleted, false),
+      orderBy: (h, { asc }) => [asc(h.date)],
+    });
+  }
+
+  async listAll() {
     return this.db.query.Holiday.findMany({ orderBy: (h, { asc }) => [asc(h.date)] });
   }
 
@@ -16,12 +23,12 @@ export class HolidayService {
     const fixed = await this.db
       .select()
       .from(Holiday)
-      .where(and(eq(Holiday.recurring, false), gte(Holiday.date, from), lte(Holiday.date, to)));
+      .where(and(eq(Holiday.deleted, false), eq(Holiday.recurring, false), gte(Holiday.date, from), lte(Holiday.date, to)));
 
     const recurring = await this.db
       .select()
       .from(Holiday)
-      .where(eq(Holiday.recurring, true));
+      .where(and(eq(Holiday.deleted, false), eq(Holiday.recurring, true)));
 
     const fromYear = parseInt(from.slice(0, 4), 10);
     const toYear = parseInt(to.slice(0, 4), 10);
@@ -43,16 +50,27 @@ export class HolidayService {
   async upsert(date: string, name: string, recurring = false) {
     await this.db
       .insert(Holiday)
-      .values({ date, name, recurring })
+      .values({ date, name, recurring, deleted: false })
       .onConflictDoUpdate({
         target: [Holiday.date],
-        set: { name, recurring },
+        set: { name, recurring, deleted: false },
       });
     return 'Holiday saved.';
   }
 
   async remove(date: string) {
-    await this.db.delete(Holiday).where(eq(Holiday.date, date));
+    await this.db
+      .update(Holiday)
+      .set({ deleted: true })
+      .where(eq(Holiday.date, date));
     return 'Holiday removed.';
+  }
+
+  async restore(date: string) {
+    await this.db
+      .update(Holiday)
+      .set({ deleted: false })
+      .where(eq(Holiday.date, date));
+    return 'Holiday restored.';
   }
 }

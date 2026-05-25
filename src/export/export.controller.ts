@@ -194,6 +194,16 @@ export class ExportController {
     return this.holidayService.remove(date);
   }
 
+  @Post('api/holidays/restore')
+  async restoreHoliday(@Body() body: { date: string }): Promise<string> {
+    return this.holidayService.restore(body.date);
+  }
+
+  @Get('api/holidays/all')
+  async listAllHolidays() {
+    return this.holidayService.listAll();
+  }
+
   @Get('api/leaves')
   async listLeaves(@Query('from') from?: string, @Query('to') to?: string) {
     return this.leaveService.list(from, to);
@@ -207,6 +217,11 @@ export class ExportController {
   @Delete('api/leaves')
   async removeLeave(@Query('discordId') discordId: string, @Query('date') date: string): Promise<string> {
     return this.leaveService.remove(discordId, date);
+  }
+
+  @Post('api/leaves/restore')
+  async restoreLeave(@Body() body: { discordId: string; date: string }): Promise<string> {
+    return this.leaveService.restore(body.discordId, body.date);
   }
 
   @Get('api/users')

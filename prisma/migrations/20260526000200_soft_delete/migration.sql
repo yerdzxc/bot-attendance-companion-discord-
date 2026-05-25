@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Leave" ADD COLUMN "deleted" BOOLEAN NOT NULL DEFAULT false;
+ALTER TABLE "Holiday" ADD COLUMN "deleted" BOOLEAN NOT NULL DEFAULT false;
