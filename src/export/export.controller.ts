@@ -229,4 +229,9 @@ export class ExportController {
   async setType(@Body() body: { discordId: string; type: 'employee' | 'intern' }): Promise<string> {
     return this.userService.setType(body.discordId, body.type);
   }
+
+  @Get('api/health')
+  async health(): Promise<{ status: string; timestamp: string }> {
+    return { status: 'ok', timestamp: new Date().toISOString() };
+  }
 }
