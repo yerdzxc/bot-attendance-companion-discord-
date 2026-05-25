@@ -359,6 +359,7 @@ export class TimeSheetService {
         timeOut: TimeSheet.timeOut,
         signatureDate: TimeSheet.signatureDate,
         late: TimeSheet.late,
+        expectedTimeOut: TimeSheet.expectedTimeOut,
       })
       .from(TimeSheet)
       .leftJoin(DiscordUser, eq(TimeSheet.discordUserId, DiscordUser.discordId))
@@ -401,6 +402,7 @@ export class TimeSheetService {
         timeOut: TimeSheet.timeOut,
         signatureDate: TimeSheet.signatureDate,
         late: TimeSheet.late,
+        expectedTimeOut: TimeSheet.expectedTimeOut,
       })
       .from(TimeSheet)
       .where(
