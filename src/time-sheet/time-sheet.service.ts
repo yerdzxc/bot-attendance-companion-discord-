@@ -55,6 +55,11 @@ export class TimeSheetService {
     const signatureDate = moment(timeIn).format('YYYY-MM-DD');
     const expectedTimeOut = moment(timeIn).add(9, 'hours').toDate();
 
+    const hour = timeIn.getHours();
+    const minute = timeIn.getMinutes();
+    const isDayShift = hour >= 5 && hour < 14;
+    const isLate = isDayShift && (hour > 9 || (hour === 9 && minute > 15));
+
     try {
       await this.db.transaction(async (tx) => {
         await tx.insert(TimeSheet).values({
@@ -63,7 +68,7 @@ export class TimeSheetService {
           timeIn,
           signatureDate,
           expectedTimeOut,
-          late: false,
+          late: isLate,
         });
         await tx
           .update(DiscordUser)
