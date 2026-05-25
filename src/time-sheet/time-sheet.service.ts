@@ -390,6 +390,47 @@ export class TimeSheetService {
     return { records, users, leaves, holidays };
   }
 
+  async getUserAttendanceRange(discordId: string, from: string, to: string) {
+    const records = await this.db
+      .select({
+        timeIn: TimeSheet.timeIn,
+        timeOut: TimeSheet.timeOut,
+        signatureDate: TimeSheet.signatureDate,
+        late: TimeSheet.late,
+      })
+      .from(TimeSheet)
+      .where(
+        and(
+          eq(TimeSheet.discordUserId, discordId),
+          gte(TimeSheet.signatureDate, from),
+          lte(TimeSheet.signatureDate, to),
+        ),
+      )
+      .orderBy(TimeSheet.signatureDate);
+
+    const user = await this.db.query.DiscordUser.findFirst({
+      where: eq(DiscordUser.discordId, discordId),
+    });
+
+    const leaves = await this.db
+      .select()
+      .from(Leave)
+      .where(
+        and(
+          eq(Leave.discordUserId, discordId),
+          gte(Leave.date, from),
+          lte(Leave.date, to),
+        ),
+      );
+
+    const holidays = await this.db
+      .select()
+      .from(Holiday)
+      .where(and(gte(Holiday.date, from), lte(Holiday.date, to)));
+
+    return { records, user, leaves, holidays };
+  }
+
   async correctTime(discordUserId: string, signatureDate: string, timeIn?: string, timeOut?: string, late?: boolean): Promise<string> {
     const record = await this.db.query.TimeSheet.findFirst({
       where: and(eq(TimeSheet.discordUserId, discordUserId), eq(TimeSheet.signatureDate, signatureDate)),

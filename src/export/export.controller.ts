@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Post, Put, Query, Res, Header } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, Res, Header } from '@nestjs/common';
 import { ExportService } from './export.service';
 import { TimeSheetService } from '@app/time-sheet/time-sheet.service';
 import { UserService } from '@app/user/user.service';
@@ -233,5 +233,14 @@ export class ExportController {
   @Get('api/health')
   async health(): Promise<{ status: string; timestamp: string }> {
     return { status: 'ok', timestamp: new Date().toISOString() };
+  }
+
+  @Get('api/export/user/:discordId')
+  async getUserAttendance(
+    @Param('discordId') discordId: string,
+    @Query('from') from: string,
+    @Query('to') to: string,
+  ) {
+    return this.timeSheetService.getUserAttendanceRange(discordId, from, to);
   }
 }
