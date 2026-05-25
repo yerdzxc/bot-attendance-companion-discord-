@@ -55,6 +55,7 @@ model TimeSheet {
   visibleTotal    Int?
   signatureDate   String?
   expectedTimeOut DateTime?
+  late            Boolean     @default(false)
   created_at      DateTime    @default(now())
   updated_at      DateTime?   @updatedAt
 

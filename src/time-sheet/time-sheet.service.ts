@@ -350,6 +350,7 @@ export class TimeSheetService {
         timeIn: TimeSheet.timeIn,
         timeOut: TimeSheet.timeOut,
         signatureDate: TimeSheet.signatureDate,
+        late: TimeSheet.late,
       })
       .from(TimeSheet)
       .leftJoin(DiscordUser, eq(TimeSheet.discordUserId, DiscordUser.discordId))
@@ -387,21 +388,22 @@ export class TimeSheetService {
     return { records, users, leaves, holidays };
   }
 
-  async correctTime(discordUserId: string, signatureDate: string, timeIn?: string, timeOut?: string): Promise<string> {
+  async correctTime(discordUserId: string, signatureDate: string, timeIn?: string, timeOut?: string, late?: boolean): Promise<string> {
     const record = await this.db.query.TimeSheet.findFirst({
       where: and(eq(TimeSheet.discordUserId, discordUserId), eq(TimeSheet.signatureDate, signatureDate)),
     });
     if (!record) return `No record found for ${signatureDate}.`;
 
     const updates: any = { updated_at: new Date() };
-    if (timeIn) {
+    if (timeIn !== undefined) {
       const [h, m] = timeIn.split(':');
       updates.timeIn = new Date(`${signatureDate}T${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:00`);
     }
-    if (timeOut) {
+    if (timeOut !== undefined) {
       const [h, m] = timeOut.split(':');
       updates.timeOut = new Date(`${signatureDate}T${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:00`);
     }
+    if (late !== undefined) updates.late = late;
 
     await this.db.update(TimeSheet).set(updates).where(eq(TimeSheet.id, record.id));
     return `Time corrected for ${signatureDate}.`;

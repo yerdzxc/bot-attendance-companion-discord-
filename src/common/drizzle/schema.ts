@@ -28,6 +28,7 @@ export const TimeSheet = pgTable('TimeSheet', {
 	visibleTotal: integer('visibleTotal'),
 	signatureDate: text('signatureDate'),
 	expectedTimeOut: timestamp('expectedTimeOut', { precision: 3 }),
+	late: boolean('late').notNull().default(false),
 	created_at: timestamp('created_at', { precision: 3 }).notNull().defaultNow(),
 	updated_at: timestamp('updated_at', { precision: 3 })
 }, (TimeSheet) => ({
