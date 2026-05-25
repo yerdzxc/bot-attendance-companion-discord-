@@ -141,6 +141,14 @@ export class UserService {
     return active ? 'User reactivated.' : 'User deactivated.';
   }
 
+  async setPosition(discordId: string, position: string | null): Promise<string> {
+    await this.db
+      .update(DiscordUser)
+      .set({ position, updated_at: new Date() })
+      .where(eq(DiscordUser.discordId, discordId));
+    return position ? `Position set to ${position}.` : 'Position cleared.';
+  }
+
   private buildMessage(exists: boolean, username: string): string {
     return `${username}, your account was succesfully ${
       exists ? 'updated' : 'binded'

@@ -219,4 +219,9 @@ export class ExportController {
   async correctTime(@Body() body: { discordUserId: string; signatureDate: string; timeIn?: string; timeOut?: string; late?: boolean }): Promise<string> {
     return this.timeSheetService.correctTime(body.discordUserId, body.signatureDate, body.timeIn, body.timeOut, body.late);
   }
+
+  @Post('api/set-position')
+  async setPosition(@Body() body: { discordId: string; position: string | null }): Promise<string> {
+    return this.userService.setPosition(body.discordId, body.position);
+  }
 }

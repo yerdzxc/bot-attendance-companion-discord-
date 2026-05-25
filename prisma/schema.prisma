@@ -34,6 +34,7 @@ model DiscordUser {
   lastAccess    String?
   type          UserType    @default(employee)
   restDay       String?
+  position      String?
   timesheets    TimeSheet[]
   leaves        Leave[]
   created_at    DateTime    @default(now())

@@ -63,6 +63,7 @@ export class TimeSheetService {
           timeIn,
           signatureDate,
           expectedTimeOut,
+          late: false,
         });
         await tx
           .update(DiscordUser)
@@ -368,6 +369,7 @@ export class TimeSheetService {
         discordId: DiscordUser.discordId,
         username: DiscordUser.username,
         restDay: DiscordUser.restDay,
+        position: DiscordUser.position,
       })
       .from(DiscordUser)
       .where(

@@ -14,6 +14,7 @@ export const DiscordUser = pgTable('DiscordUser', {
 	lastAccess: text('lastAccess'),
 	type: UserType('type').notNull().default("employee"),
 	restDay: text('restDay'),
+	position: text('position'),
 	created_at: timestamp('created_at', { precision: 3 }).notNull().defaultNow(),
 	updated_at: timestamp('updated_at', { precision: 3 })
 });
@@ -28,7 +29,7 @@ export const TimeSheet = pgTable('TimeSheet', {
 	visibleTotal: integer('visibleTotal'),
 	signatureDate: text('signatureDate'),
 	expectedTimeOut: timestamp('expectedTimeOut', { precision: 3 }),
-	late: boolean('late').notNull().default(false),
+	late: boolean('late').notNull(),
 	created_at: timestamp('created_at', { precision: 3 }).notNull().defaultNow(),
 	updated_at: timestamp('updated_at', { precision: 3 })
 }, (TimeSheet) => ({
