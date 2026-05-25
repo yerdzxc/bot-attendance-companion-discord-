@@ -1,5 +1,5 @@
 -- CreateEnum
-CREATE TYPE "OvertimeType" AS ENUM ('pre', 'post');
+CREATE TYPE "OvertimeType" AS ENUM ('pre', 'post', 'rd', 'holiday');
 CREATE TYPE "OvertimeStatus" AS ENUM ('pending', 'approved', 'rejected');
 
 -- CreateTable

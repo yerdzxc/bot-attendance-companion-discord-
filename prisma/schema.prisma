@@ -97,6 +97,8 @@ model ActivityLog {
 enum OvertimeType {
   pre
   post
+  rd
+  holiday
 }
 
 enum OvertimeStatus {

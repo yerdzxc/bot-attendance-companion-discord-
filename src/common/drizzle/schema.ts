@@ -5,7 +5,7 @@ export const UserType = pgEnum('UserType', ['employee', 'intern'])
 
 export const LeaveType = pgEnum('LeaveType', ['SL', 'VL', 'EL', 'BDL', 'OB'])
 
-export const OvertimeType = pgEnum('OvertimeType', ['pre', 'post'])
+export const OvertimeType = pgEnum('OvertimeType', ['pre', 'post', 'rd', 'holiday'])
 
 export const OvertimeStatus = pgEnum('OvertimeStatus', ['pending', 'approved', 'rejected'])
 
