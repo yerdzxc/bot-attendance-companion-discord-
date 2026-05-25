@@ -3,6 +3,7 @@ import { DiscordUserDto } from './user/dtos/discord-user.dto';
 import { UserService } from './user/user.service';
 import { SetTimeDto } from './time-sheet/dtos/set-time.dto';
 import { TimeSheetService } from './time-sheet/time-sheet.service';
+import { OvertimeRequestService } from './overtime-request/overtime-request.service';
 import { ApiProperty, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { SignatureGuard } from './common/guards/signature-guard';
 import { ApiSigningSecretDecorator } from './common/decorators/api-signing-secret.decorator';
@@ -15,6 +16,23 @@ class SetNameDto {
   username: string;
 }
 
+class OvertimeDiscordDto {
+  @ApiProperty({ example: '12312312' })
+  discordId: string;
+
+  @ApiProperty({ example: '2026-05-26' })
+  date: string;
+
+  @ApiProperty({ example: 2 })
+  hours: number;
+
+  @ApiProperty({ example: 'post' })
+  type: 'pre' | 'post';
+
+  @ApiProperty({ example: 'Overtime reason', required: false })
+  note?: string;
+}
+
 @ApiTags('APP')
 @Controller('api')
 @UseGuards(SignatureGuard)
@@ -23,6 +41,7 @@ export class AppController {
   constructor(
     private readonly userService: UserService,
     private readonly timeSheetService: TimeSheetService,
+    private readonly overtimeService: OvertimeRequestService,
   ) {}
 
   @Get('test')
@@ -84,5 +103,11 @@ export class AppController {
   @Get('absent-intern')
   async absentIntern() {
     return await this.timeSheetService.absent('intern');
+  }
+
+  @Post('overtime')
+  async fileOvertime(@Body() body: OvertimeDiscordDto): Promise<string> {
+    await this.overtimeService.create(body.discordId, body.date, body.hours, body.type, body.note);
+    return `Overtime request filed: ${body.hours}h ${body.type === 'pre' ? 'pre-shift' : 'post-shift'} on ${body.date}`;
   }
 }

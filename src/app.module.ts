@@ -8,6 +8,7 @@ import { SchedulerModule } from './scheduler/scheduler.module';
 import { DrizzleModule } from './common/drizzle/drizzle.module';
 import { ConfigModule } from '@nestjs/config';
 import { ExportModule } from './export/export.module';
+import { OvertimeRequestService } from './overtime-request/overtime-request.service';
 
 @Module({
   imports: [
@@ -20,6 +21,6 @@ import { ExportModule } from './export/export.module';
     ExportModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, OvertimeRequestService],
 })
 export class AppModule {}
