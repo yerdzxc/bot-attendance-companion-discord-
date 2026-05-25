@@ -11,8 +11,8 @@ CREATE TABLE "Leave" (
     "date" TEXT NOT NULL,
     "type" "LeaveType" NOT NULL,
     "note" TEXT,
-    "created_at" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMPTZ(3),
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3),
 
     CONSTRAINT "Leave_pkey" PRIMARY KEY ("id")
 );
@@ -22,7 +22,7 @@ CREATE TABLE "Holiday" (
     "id" SERIAL NOT NULL,
     "date" TEXT NOT NULL,
     "name" TEXT NOT NULL,
-    "created_at" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "Holiday_pkey" PRIMARY KEY ("id")
 );
