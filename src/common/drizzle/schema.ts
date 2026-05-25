@@ -70,6 +70,7 @@ export const Holiday = pgTable('Holiday', {
 	id: serial('id').notNull().primaryKey(),
 	date: text('date').notNull().unique(),
 	name: text('name').notNull(),
+	recurring: boolean('recurring').notNull(),
 	created_at: timestamp('created_at', { precision: 3 }).notNull().defaultNow()
 });
 

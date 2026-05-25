@@ -83,6 +83,7 @@ model Holiday {
   id         Int       @id @default(autoincrement())
   date       String    @unique
   name       String
+  recurring  Boolean   @default(false)
   created_at DateTime  @default(now())
 }
 

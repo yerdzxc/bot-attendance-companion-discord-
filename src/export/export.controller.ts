@@ -185,8 +185,8 @@ export class ExportController {
   }
 
   @Post('api/holidays')
-  async upsertHoliday(@Body() body: { date: string; name: string }): Promise<string> {
-    return this.holidayService.upsert(body.date, body.name);
+  async upsertHoliday(@Body() body: { date: string; name: string; recurring?: boolean }): Promise<string> {
+    return this.holidayService.upsert(body.date, body.name, body.recurring);
   }
 
   @Delete('api/holidays')

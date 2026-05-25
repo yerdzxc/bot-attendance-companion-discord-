@@ -5,7 +5,8 @@ import * as moment from 'moment';
 import { DrizzleService } from '@app/common/types/drizzle';
 import { DRIZZLE } from '@app/common/drizzle/drizzle.module';
 import { and, desc, eq, gte, lte, inArray } from 'drizzle-orm';
-import { DiscordUser, TimeSheet, Leave, Holiday } from '@app/common/drizzle/schema';
+import { DiscordUser, TimeSheet, Leave } from '@app/common/drizzle/schema';
+import { HolidayService } from '@app/holiday/holiday.service';
 import {
   DiscordUserModel,
   TimeSheetModel,
@@ -17,6 +18,7 @@ export class TimeSheetService {
   constructor(
     @Inject(DRIZZLE) private db: DrizzleService,
     private readonly userService: UserService,
+    private readonly holidayService: HolidayService,
   ) {}
 
   async setTime(setTimeDto: SetTimeDto): Promise<string> {
@@ -387,10 +389,7 @@ export class TimeSheetService {
       .from(Leave)
       .where(and(gte(Leave.date, from), lte(Leave.date, to)));
 
-    const holidays = await this.db
-      .select()
-      .from(Holiday)
-      .where(and(gte(Holiday.date, from), lte(Holiday.date, to)));
+    const holidays = await this.holidayService.listInRange(from, to);
 
     return { records, users, leaves, holidays };
   }
@@ -428,10 +427,7 @@ export class TimeSheetService {
         ),
       );
 
-    const holidays = await this.db
-      .select()
-      .from(Holiday)
-      .where(and(gte(Holiday.date, from), lte(Holiday.date, to)));
+    const holidays = await this.holidayService.listInRange(from, to);
 
     return { records, user, leaves, holidays };
   }
