@@ -224,4 +224,9 @@ export class ExportController {
   async setPosition(@Body() body: { discordId: string; position: string | null }): Promise<string> {
     return this.userService.setPosition(body.discordId, body.position);
   }
+
+  @Post('api/set-type')
+  async setType(@Body() body: { discordId: string; type: 'employee' | 'intern' }): Promise<string> {
+    return this.userService.setType(body.discordId, body.type);
+  }
 }

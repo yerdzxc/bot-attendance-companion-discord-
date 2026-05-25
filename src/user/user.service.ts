@@ -149,6 +149,14 @@ export class UserService {
     return position ? `Position set to ${position}.` : 'Position cleared.';
   }
 
+  async setType(discordId: string, type: 'employee' | 'intern'): Promise<string> {
+    await this.db
+      .update(DiscordUser)
+      .set({ type, updated_at: new Date() })
+      .where(eq(DiscordUser.discordId, discordId));
+    return `User type changed to ${type}.`;
+  }
+
   private buildMessage(exists: boolean, username: string): string {
     return `${username}, your account was succesfully ${
       exists ? 'updated' : 'binded'
