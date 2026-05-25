@@ -93,3 +93,30 @@ model ActivityLog {
   detail     String?
   created_at DateTime @default(now())
 }
+
+enum OvertimeType {
+  pre
+  post
+}
+
+enum OvertimeStatus {
+  pending
+  approved
+  rejected
+}
+
+model OvertimeRequest {
+  id            Int             @id @default(autoincrement())
+  discordUserId String
+  date          String
+  hours         Float
+  type          OvertimeType
+  status        OvertimeStatus  @default(pending)
+  note          String?
+  created_at    DateTime        @default(now())
+  updated_at    DateTime?       @updatedAt
+
+  @@index([discordUserId])
+  @@index([date])
+  @@index([status])
+}

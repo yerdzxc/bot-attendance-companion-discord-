@@ -1,9 +1,13 @@
 import { relations } from 'drizzle-orm'
-import { boolean, foreignKey, integer, pgEnum, pgTable, serial, text, timestamp, uniqueIndex } from 'drizzle-orm/pg-core'
+import { boolean, doublePrecision, foreignKey, integer, pgEnum, pgTable, serial, text, timestamp, uniqueIndex } from 'drizzle-orm/pg-core'
 
 export const UserType = pgEnum('UserType', ['employee', 'intern'])
 
 export const LeaveType = pgEnum('LeaveType', ['SL', 'VL', 'EL', 'BDL', 'OB'])
+
+export const OvertimeType = pgEnum('OvertimeType', ['pre', 'post'])
+
+export const OvertimeStatus = pgEnum('OvertimeStatus', ['pending', 'approved', 'rejected'])
 
 export const DiscordUser = pgTable('DiscordUser', {
 	id: serial('id').notNull().primaryKey(),
@@ -75,6 +79,18 @@ export const ActivityLog = pgTable('ActivityLog', {
 	targetId: text('targetId'),
 	detail: text('detail'),
 	created_at: timestamp('created_at', { precision: 3 }).notNull().defaultNow()
+});
+
+export const OvertimeRequest = pgTable('OvertimeRequest', {
+	id: serial('id').notNull().primaryKey(),
+	discordUserId: text('discordUserId').notNull(),
+	date: text('date').notNull(),
+	hours: doublePrecision('hours').notNull(),
+	type: OvertimeType('type').notNull(),
+	status: OvertimeStatus('status').notNull().default("pending"),
+	note: text('note'),
+	created_at: timestamp('created_at', { precision: 3 }).notNull().defaultNow(),
+	updated_at: timestamp('updated_at', { precision: 3 })
 });
 
 export const DiscordUserRelations = relations(DiscordUser, ({ many }) => ({

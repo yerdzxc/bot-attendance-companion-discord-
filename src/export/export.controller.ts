@@ -4,6 +4,7 @@ import { TimeSheetService } from '@app/time-sheet/time-sheet.service';
 import { UserService } from '@app/user/user.service';
 import { HolidayService } from '@app/holiday/holiday.service';
 import { LeaveService } from '@app/leave/leave.service';
+import { OvertimeRequestService } from '@app/overtime-request/overtime-request.service';
 import { ActivityLogService } from '@app/activity-log/activity-log.service';
 import { FastifyReply } from 'fastify';
 
@@ -15,6 +16,7 @@ export class ExportController {
     private readonly userService: UserService,
     private readonly holidayService: HolidayService,
     private readonly leaveService: LeaveService,
+    private readonly overtimeService: OvertimeRequestService,
     private readonly activityLog: ActivityLogService,
   ) {}
 
@@ -259,5 +261,35 @@ export class ExportController {
   @Get('api/activity-log')
   async getActivityLog(@Query('limit') limit?: string) {
     return this.activityLog.list(limit ? parseInt(limit, 10) : 100);
+  }
+
+  @Post('api/overtime/request')
+  async createOvertimeRequest(@Body() body: { discordUserId: string; date: string; hours: number; type: 'pre' | 'post'; note?: string }): Promise<string> {
+    const msg = await this.overtimeService.create(body.discordUserId, body.date, body.hours, body.type, body.note);
+    await this.activityLog.log('overtime.create', body.discordUserId, `${body.type} ${body.hours}h on ${body.date}`);
+    return msg;
+  }
+
+  @Get('api/overtime/requests')
+  async listOvertimeRequests(
+    @Query('from') from?: string,
+    @Query('to') to?: string,
+    @Query('status') status?: string,
+  ) {
+    return this.overtimeService.list(from, to, status);
+  }
+
+  @Post('api/overtime/:id/approve')
+  async approveOvertime(@Param('id') id: string, @Body() body: { note?: string }): Promise<string> {
+    const msg = await this.overtimeService.approve(parseInt(id, 10), body.note);
+    await this.activityLog.log('overtime.approve', id, body.note);
+    return msg;
+  }
+
+  @Post('api/overtime/:id/reject')
+  async rejectOvertime(@Param('id') id: string, @Body() body: { note?: string }): Promise<string> {
+    const msg = await this.overtimeService.reject(parseInt(id, 10), body.note);
+    await this.activityLog.log('overtime.reject', id, body.note);
+    return msg;
   }
 }
