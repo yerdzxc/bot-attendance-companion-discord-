@@ -157,6 +157,22 @@ export class UserService {
     return `User type changed to ${type}.`;
   }
 
+  async batchSetActive(discordIds: string[], active: boolean): Promise<string> {
+    await this.db
+      .update(DiscordUser)
+      .set({ active, updated_at: new Date() })
+      .where(inArray(DiscordUser.discordId, discordIds));
+    return `${discordIds.length} user(s) ${active ? 'reactivated' : 'deactivated'}.`;
+  }
+
+  async batchSetType(discordIds: string[], type: 'employee' | 'intern'): Promise<string> {
+    await this.db
+      .update(DiscordUser)
+      .set({ type, updated_at: new Date() })
+      .where(inArray(DiscordUser.discordId, discordIds));
+    return `${discordIds.length} user(s) type changed to ${type}.`;
+  }
+
   private buildMessage(exists: boolean, username: string): string {
     return `${username}, your account was succesfully ${
       exists ? 'updated' : 'binded'

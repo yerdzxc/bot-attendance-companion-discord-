@@ -243,4 +243,14 @@ export class ExportController {
   ) {
     return this.timeSheetService.getUserAttendanceRange(discordId, from, to);
   }
+
+  @Post('api/users/batch-set-active')
+  async batchSetActive(@Body() body: { discordIds: string[]; active: boolean }): Promise<string> {
+    return this.userService.batchSetActive(body.discordIds, body.active);
+  }
+
+  @Post('api/users/batch-set-type')
+  async batchSetType(@Body() body: { discordIds: string[]; type: 'employee' | 'intern' }): Promise<string> {
+    return this.userService.batchSetType(body.discordIds, body.type);
+  }
 }
