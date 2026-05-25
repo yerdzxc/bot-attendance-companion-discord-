@@ -4,6 +4,7 @@ import { TimeSheetService } from '@app/time-sheet/time-sheet.service';
 import { UserService } from '@app/user/user.service';
 import { HolidayService } from '@app/holiday/holiday.service';
 import { LeaveService } from '@app/leave/leave.service';
+import { ActivityLogService } from '@app/activity-log/activity-log.service';
 import { FastifyReply } from 'fastify';
 
 @Controller()
@@ -14,6 +15,7 @@ export class ExportController {
     private readonly userService: UserService,
     private readonly holidayService: HolidayService,
     private readonly leaveService: LeaveService,
+    private readonly activityLog: ActivityLogService,
   ) {}
 
   @Get('export')
@@ -252,5 +254,10 @@ export class ExportController {
   @Post('api/users/batch-set-type')
   async batchSetType(@Body() body: { discordIds: string[]; type: 'employee' | 'intern' }): Promise<string> {
     return this.userService.batchSetType(body.discordIds, body.type);
+  }
+
+  @Get('api/activity-log')
+  async getActivityLog(@Query('limit') limit?: string) {
+    return this.activityLog.list(limit ? parseInt(limit, 10) : 100);
   }
 }

@@ -6,10 +6,11 @@ import { UserModule } from '@app/user/user.module';
 import { DrizzleModule } from '@app/common/drizzle/drizzle.module';
 import { HolidayService } from '@app/holiday/holiday.service';
 import { LeaveService } from '@app/leave/leave.service';
+import { ActivityLogService } from '@app/activity-log/activity-log.service';
 
 @Module({
   imports: [TimeSheetModule, UserModule, DrizzleModule],
   controllers: [ExportController],
-  providers: [ExportService, HolidayService, LeaveService],
+  providers: [ExportService, HolidayService, LeaveService, ActivityLogService],
 })
 export class ExportModule {}

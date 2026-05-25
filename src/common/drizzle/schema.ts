@@ -69,6 +69,14 @@ export const Holiday = pgTable('Holiday', {
 	created_at: timestamp('created_at', { precision: 3 }).notNull().defaultNow()
 });
 
+export const ActivityLog = pgTable('ActivityLog', {
+	id: serial('id').notNull().primaryKey(),
+	action: text('action').notNull(),
+	targetId: text('targetId'),
+	detail: text('detail'),
+	created_at: timestamp('created_at', { precision: 3 }).notNull().defaultNow()
+});
+
 export const DiscordUserRelations = relations(DiscordUser, ({ many }) => ({
 	timesheets: many(TimeSheet, {
 		relationName: 'DiscordUserToTimeSheet'

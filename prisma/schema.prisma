@@ -80,10 +80,16 @@ model Leave {
 }
 
 model Holiday {
-  id         Int      @id @default(autoincrement())
-  date       String   @unique
+  id         Int       @id @default(autoincrement())
+  date       String    @unique
   name       String
-  created_at DateTime @default(now())
+  created_at DateTime  @default(now())
+}
 
-  @@index([date])
+model ActivityLog {
+  id         Int      @id @default(autoincrement())
+  action     String
+  targetId   String?
+  detail     String?
+  created_at DateTime @default(now())
 }

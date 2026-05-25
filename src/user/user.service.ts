@@ -5,10 +5,14 @@ import { DRIZZLE } from '@app/common/drizzle/drizzle.module';
 import { eq, inArray, and } from 'drizzle-orm';
 import { DiscordUser } from '@app/common/drizzle/schema';
 import { DiscordUserDto } from './dtos/discord-user.dto';
+import { ActivityLogService } from '../activity-log/activity-log.service';
 
 @Injectable()
 export class UserService {
-  constructor(@Inject(DRIZZLE) private db: DrizzleService) {}
+  constructor(
+    @Inject(DRIZZLE) private db: DrizzleService,
+    private readonly activityLog: ActivityLogService,
+  ) {}
 
   async exists(id: string): Promise<boolean> {
     const exists = await this.db.query.DiscordUser.findFirst({
@@ -138,7 +142,9 @@ export class UserService {
       .update(DiscordUser)
       .set({ active, updated_at: new Date() })
       .where(eq(DiscordUser.discordId, discordId));
-    return active ? 'User reactivated.' : 'User deactivated.';
+    const msg = active ? 'User reactivated.' : 'User deactivated.';
+    await this.activityLog.log(active ? 'user_activated' : 'user_deactivated', discordId);
+    return msg;
   }
 
   async setPosition(discordId: string, position: string | null): Promise<string> {
@@ -146,7 +152,9 @@ export class UserService {
       .update(DiscordUser)
       .set({ position, updated_at: new Date() })
       .where(eq(DiscordUser.discordId, discordId));
-    return position ? `Position set to ${position}.` : 'Position cleared.';
+    const msg = position ? `Position set to ${position}.` : 'Position cleared.';
+    await this.activityLog.log('position_changed', discordId, position || 'cleared');
+    return msg;
   }
 
   async setType(discordId: string, type: 'employee' | 'intern'): Promise<string> {
@@ -154,6 +162,7 @@ export class UserService {
       .update(DiscordUser)
       .set({ type, updated_at: new Date() })
       .where(eq(DiscordUser.discordId, discordId));
+    await this.activityLog.log('type_changed', discordId, type);
     return `User type changed to ${type}.`;
   }
 
@@ -162,7 +171,9 @@ export class UserService {
       .update(DiscordUser)
       .set({ active, updated_at: new Date() })
       .where(inArray(DiscordUser.discordId, discordIds));
-    return `${discordIds.length} user(s) ${active ? 'reactivated' : 'deactivated'}.`;
+    const msg = `${discordIds.length} user(s) ${active ? 'reactivated' : 'deactivated'}.`;
+    await this.activityLog.log(active ? 'batch_user_activated' : 'batch_user_deactivated', undefined, discordIds.join(','));
+    return msg;
   }
 
   async batchSetType(discordIds: string[], type: 'employee' | 'intern'): Promise<string> {
@@ -170,7 +181,9 @@ export class UserService {
       .update(DiscordUser)
       .set({ type, updated_at: new Date() })
       .where(inArray(DiscordUser.discordId, discordIds));
-    return `${discordIds.length} user(s) type changed to ${type}.`;
+    const msg = `${discordIds.length} user(s) type changed to ${type}.`;
+    await this.activityLog.log('batch_type_changed', undefined, `${type}: ${discordIds.join(',')}`);
+    return msg;
   }
 
   private buildMessage(exists: boolean, username: string): string {
